@@ -16,7 +16,8 @@ Voce nao precisa rodar isso na sua maquina: o workflow em
 nos servidores do GitHub (Actions), que tem internet livre. Basta subir
 os arquivos no repositorio e clicar em "Run workflow".
 
-Demora alguns minutos para ~340 livros. O arquivo final fica bem
+Baixa varios livros ao mesmo tempo (ate 10 em paralelo), entao para
+~340 livros costuma levar de 2 a 6 minutos. O arquivo final fica bem
 maior (pode passar de 10-15 MB), porque as imagens vão embutidas
 no próprio HTML.
 """
@@ -24,13 +25,14 @@ import sys
 import re
 import json
 import base64
-import time
 import urllib.request
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 OPENLIBRARY = "https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg?default=false"
 GOOGLE_BOOKS = "https://www.googleapis.com/books/v1/volumes?maxResults=1&q={q}"
-TIMEOUT = 8
+TIMEOUT = 6
+WORKERS = 10
 
 
 def fetch_bytes(url):
@@ -111,16 +113,23 @@ def main():
 
     cover_map = {}
     total = len(books)
-    for i, book in enumerate(books, 1):
-        print(f"[{i}/{total}] {book['t'][:50]}...", end=" ")
-        data, ctype = cover_for_book(book)
-        if data:
-            b64 = base64.b64encode(data).decode("ascii")
-            cover_map[book["id"]] = f"data:{ctype};base64,{b64}"
-            print("OK")
-        else:
-            print("sem capa encontrada")
-        time.sleep(0.15)  # ser gentil com as APIs públicas
+    done = 0
+
+    def worker(book):
+        return book, *cover_for_book(book)
+
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        futures = [pool.submit(worker, book) for book in books]
+        for future in as_completed(futures):
+            book, data, ctype = future.result()
+            done += 1
+            if data:
+                b64 = base64.b64encode(data).decode("ascii")
+                cover_map[book["id"]] = f"data:{ctype};base64,{b64}"
+                status = "OK"
+            else:
+                status = "sem capa encontrada"
+            print(f"[{done}/{total}] {book['t'][:50]}... {status}", flush=True)
 
     cover_json = json.dumps(cover_map, ensure_ascii=False)
     new_html = re.sub(
