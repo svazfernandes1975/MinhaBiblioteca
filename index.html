@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Biblioteca — Estante Pessoal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12141c;
+    --bg-elevated:#171b26;
+    --card:#1c2130;
+    --card-hover:#242a3c;
+    --brass:#c9a24b;
+    --brass-light:#e3c584;
+    --burgundy:#9c4a44;
+    --burgundy-light:#c17169;
+    --paper:#eae6da;
+    --paper-dim:#a9a595;
+    --muted:#6d7488;
+    --line:rgba(234,230,218,0.09);
+    --line-strong:rgba(234,230,218,0.16);
+    --shadow:0 12px 30px -12px rgba(0,0,0,0.55);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(201,162,75,0.09), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(156,74,68,0.10), transparent 55%),
+      var(--bg);
+    color:var(--paper);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{background:var(--brass); color:#1a1206;}
+  a{color:inherit;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .serif{font-family:'Fraunces',serif;}
+
+  /* ---------- layout shells ---------- */
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  @media(max-width:640px){ .wrap{padding:0 18px;} }
+
+  /* ---------- header ---------- */
+  header.site{
+    position:sticky; top:0; z-index:40;
+    backdrop-filter:blur(14px);
+    background:rgba(18,20,28,0.82);
+    border-bottom:1px solid var(--line);
+  }
+  .header-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px; max-width:1180px; margin:0 auto;
+  }
+  .brand{display:flex; align-items:baseline; gap:10px;}
+  .brand-mark{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em;
+    color:var(--brass); border:1px solid rgba(201,162,75,0.4); border-radius:4px;
+    padding:3px 7px; text-transform:uppercase;
+  }
+  .brand-name{font-family:'Fraunces',serif; font-weight:600; font-size:19px; letter-spacing:0.01em;}
+  nav.site-nav{display:flex; gap:26px; font-size:13.5px; color:var(--paper-dim);}
+  nav.site-nav a{text-decoration:none; transition:color .15s;}
+  nav.site-nav a:hover{color:var(--brass-light);}
+  @media(max-width:640px){
+    .header-inner{padding:13px 18px;}
+    .brand-name{font-size:16px;}
+    nav.site-nav{gap:16px; font-size:12.5px;}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 0 40px;}
+  .hero-tag{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.16em;
+    color:var(--burgundy-light); text-transform:uppercase; margin:0 0 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hero-tag::before{content:''; width:26px; height:1px; background:var(--burgundy-light); display:inline-block;}
+  .hero-number{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+    font-size:clamp(64px,14vw,132px); line-height:0.92; margin:0;
+    background:linear-gradient(180deg, var(--brass-light) 0%, var(--brass) 60%, #a67f37 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    letter-spacing:-0.02em;
+  }
+  .hero-label{
+    font-family:'Fraunces',serif; font-size:clamp(20px,3.6vw,32px); color:var(--paper);
+    margin:2px 0 22px; font-weight:400;
+  }
+  .hero-meta{
+    display:flex; flex-wrap:wrap; gap:10px 0; font-family:'JetBrains Mono',monospace;
+    font-size:13px; color:var(--paper-dim);
+  }
+  .hero-meta span{padding:0 16px 0 0; border-right:1px solid var(--line-strong); margin-right:16px;}
+  .hero-meta span:last-child{border-right:none;}
+  .hero-meta b{color:var(--brass-light); font-weight:600;}
+  .callnumber{
+    margin-top:26px; display:inline-block; font-family:'JetBrains Mono',monospace; font-size:11.5px;
+    color:var(--muted); border:1px dashed var(--line-strong); border-radius:4px; padding:6px 12px;
+    letter-spacing:0.05em;
+  }
+  @media(max-width:640px){
+    .hero{padding:40px 0 28px;}
+    .hero-meta span{margin-right:12px; padding-right:12px; font-size:11.5px;}
+  }
+
+  /* ---------- section headings ---------- */
+  .section-head{display:flex; align-items:baseline; gap:14px; margin:0 0 22px;}
+  .section-num{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--brass);}
+  .section-title{font-family:'Fraunces',serif; font-size:26px; font-weight:600; margin:0;}
+  .section-sub{color:var(--paper-dim); font-size:13.5px; margin:-14px 0 24px;}
+
+  section{padding:36px 0;}
+  section#dashboard{padding-top:8px;}
+
+  /* ---------- stat cards (index-card motif) ---------- */
+  .card-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:16px; margin-bottom:16px;
+  }
+  .icard{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 18px 16px; position:relative; box-shadow:var(--shadow);
+    transition:border-color .15s, transform .15s;
+  }
+  .icard::before{
+    content:''; position:absolute; top:0; left:20px; width:34px; height:5px;
+    background:rgba(201,162,75,0.28); border-radius:0 0 4px 4px;
+  }
+  .icard:hover{border-color:var(--line-strong);}
+  .icard-tab{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.12em;
+    color:var(--muted); text-transform:uppercase; margin:6px 0 10px;
+  }
+  .icard-value{font-family:'Fraunces',serif; font-size:32px; font-weight:600; color:var(--paper); line-height:1.1;}
+  .icard-value small{font-family:'Inter'; font-size:13px; color:var(--paper-dim); font-weight:400; margin-left:4px;}
+  .icard-note{font-size:12px; color:var(--paper-dim); margin-top:6px; line-height:1.4;}
+
+  .chart-grid{display:grid; grid-template-columns:1.5fr 1fr; gap:16px;}
+  @media(max-width:900px){ .chart-grid{grid-template-columns:1fr;} .card-grid{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:520px){ .card-grid{grid-template-columns:1fr 1fr;} }
+
+  .chart-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 22px 14px; box-shadow:var(--shadow);
+  }
+  .chart-card h3{
+    font-family:'Fraunces',serif; font-size:16px; font-weight:600; margin:2px 0 16px;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .chart-card h3 span{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); font-weight:400;}
+
+  #yearChart{width:100%; height:180px; display:block;}
+  .yc-bar{fill:var(--brass); opacity:0.88; transition:opacity .15s;}
+  .yc-bar:hover{opacity:1;}
+  .yc-label,.yc-count{font-family:'JetBrains Mono',monospace; fill:var(--paper-dim); font-size:10.5px;}
+  .yc-count{fill:var(--brass-light);}
+
+  .rating-rows{display:flex; flex-direction:column; gap:9px; margin-top:2px;}
+  .rating-row{display:grid; grid-template-columns:44px 1fr 34px; align-items:center; gap:10px;}
+  .rating-row .stars{font-size:11px; color:var(--brass); font-family:'JetBrains Mono',monospace; letter-spacing:-1px;}
+  .rating-track{height:9px; background:var(--bg-elevated); border-radius:5px; overflow:hidden;}
+  .rating-fill{height:100%; background:linear-gradient(90deg,var(--burgundy),var(--burgundy-light)); border-radius:5px;}
+  .rating-row .cnt{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--paper-dim); text-align:right;}
+
+  .authors-list{display:flex; flex-direction:column; gap:10px; margin-top:2px;}
+  .author-row{display:grid; grid-template-columns:20px 1fr auto; align-items:center; gap:10px;}
+  .author-rank{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);}
+  .author-name{font-size:13.5px; color:var(--paper);}
+  .author-bar-wrap{grid-column:1/-1; height:6px; background:var(--bg-elevated); border-radius:4px; overflow:hidden; margin-top:-4px;}
+  .author-bar{height:100%; background:linear-gradient(90deg,var(--brass),var(--brass-light)); border-radius:4px;}
+  .author-count{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--brass-light);}
+
+  .misc-row{display:flex; gap:16px; flex-wrap:wrap; margin-top:16px;}
+  .misc-pill{
+    flex:1; min-width:220px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px; box-shadow:var(--shadow);
+  }
+  .misc-pill .icard-tab{margin-bottom:8px;}
+  .misc-pill .title{font-family:'Fraunces',serif; font-size:15px; color:var(--paper);}
+  .misc-pill .sub{font-size:12px; color:var(--paper-dim); margin-top:3px;}
+
+  .pace-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .pace-item{background:var(--bg-elevated); border:1px solid var(--line); border-radius:10px; padding:12px 14px;}
+  .pace-item .icard-tab{margin-bottom:6px;}
+  .pace-item .pv{font-family:'Fraunces',serif; font-size:20px; color:var(--paper);}
+  .pace-item .pv small{font-family:'Inter'; font-size:11.5px; color:var(--paper-dim); font-weight:400;}
+  .genre-loading{font-size:12px; color:var(--muted); line-height:1.5; padding:6px 2px;}
+
+  /* ---------- currently reading ribbon ---------- */
+  .reading-banner{
+    display:flex; gap:18px; align-items:center; background:linear-gradient(120deg, rgba(156,74,68,0.16), rgba(201,162,75,0.08));
+    border:1px solid rgba(201,162,75,0.25); border-radius:var(--radius); padding:16px 20px; margin:0 0 34px;
+    position:relative; overflow:hidden;
+  }
+  .ribbon{
+    position:absolute; top:-6px; left:24px; width:22px; height:44px; background:var(--burgundy);
+    clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%);
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  }
+  .reading-banner .cover-mini{width:44px; height:64px; border-radius:3px; overflow:hidden; flex-shrink:0; box-shadow:0 6px 14px rgba(0,0,0,0.4); margin-left:20px; position:relative;}
+  .reading-banner .cover-mini .cover-frame{width:44px; height:64px; border-radius:3px;}
+  .reading-text .eyebrow{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; color:var(--brass-light); text-transform:uppercase;}
+  .reading-text .book-title{font-family:'Fraunces',serif; font-size:17px; margin:3px 0 2px;}
+  .reading-text .book-author{font-size:12.5px; color:var(--paper-dim);}
+
+  /* ---------- filter bar ---------- */
+  .filters{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:30px;
+    background:var(--bg-elevated); border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+  }
+  .filters input[type="search"]{
+    flex:1; min-width:180px; background:var(--card); border:1px solid var(--line-strong); color:var(--paper);
+    padding:9px 13px; border-radius:8px; font-family:'Inter'; font-size:13.5px; outline:none;
+  }
+  .filters input[type="search"]::placeholder{color:var(--muted);}
+  .filters input[type="search"]:focus{border-color:var(--brass);}
+  .filters select{
+    background:var(--card); color:var(--paper); border:1px solid var(--line-strong); border-radius:8px;
+    padding:9px 11px; font-family:'Inter'; font-size:13px; outline:none; cursor:pointer;
+  }
+  .filters select:focus{border-color:var(--brass);}
+  .pill-group{display:flex; gap:6px; background:var(--card); padding:4px; border-radius:9px; border:1px solid var(--line-strong);}
+  .pill-btn{
+    border:none; background:transparent; color:var(--paper-dim); font-family:'Inter'; font-size:12.5px;
+    padding:6px 12px; border-radius:6px; cursor:pointer; transition:all .15s;
+  }
+  .pill-btn.active{background:var(--brass); color:#1a1206; font-weight:600;}
+  .result-count{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--muted); margin-left:auto; white-space:nowrap;}
+  .active-chips{display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{
+    background:rgba(201,162,75,0.16); border:1px solid rgba(201,162,75,0.4); color:var(--brass-light);
+    font-family:'JetBrains Mono',monospace; font-size:11px; padding:5px 9px; border-radius:20px; cursor:pointer;
+    display:flex; align-items:center; gap:5px;
+  }
+  .chip span{color:var(--paper-dim); font-size:13px; line-height:1;}
+  .chip:hover{border-color:var(--brass);}
+
+  /* ---------- shelf ---------- */
+  .year-group{margin-bottom:38px;}
+  .year-head{
+    display:flex; align-items:baseline; gap:12px; margin-bottom:16px;
+    padding-bottom:8px; border-bottom:1px solid var(--line);
+  }
+  .year-head .yr{font-family:'Fraunces',serif; font-style:italic; font-size:26px; color:var(--brass-light);}
+  .year-head .yr-count{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--muted);}
+  .shelf-row{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(118px,1fr)); gap:18px 14px;
+    position:relative; padding-bottom:14px;
+  }
+  .book{cursor:pointer; display:flex; flex-direction:column; gap:6px;}
+  .cover-frame{
+    position:relative; aspect-ratio:2/3; border-radius:5px; overflow:hidden;
+    background:var(--card); box-shadow:0 8px 18px -8px rgba(0,0,0,0.6);
+    transition:transform .18s ease, box-shadow .18s ease;
+    border:1px solid rgba(234,230,218,0.06);
+  }
+  .book:hover .cover-frame{transform:translateY(-5px) rotate(-0.4deg); box-shadow:0 16px 26px -10px rgba(0,0,0,0.65);}
+  .cover-frame img{width:100%; height:100%; object-fit:cover; display:block;}
+  .cover-frame.placeholder{
+    display:flex; align-items:center; justify-content:center; padding:10px; text-align:center;
+  }
+  .cover-frame.placeholder .ph-title{font-family:'Fraunces',serif; font-size:12.5px; line-height:1.25; color:rgba(255,255,255,0.92);}
+  .cover-frame.placeholder .ph-author{font-family:'JetBrains Mono',monospace; font-size:9px; margin-top:6px; color:rgba(255,255,255,0.65);}
+  .cover-badge{
+    position:absolute; bottom:5px; right:5px; background:rgba(18,20,28,0.82); backdrop-filter:blur(3px);
+    color:var(--brass-light); font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 5px;
+    border-radius:4px; display:flex; align-items:center; gap:2px;
+  }
+  .cover-reread{
+    position:absolute; top:5px; left:5px; background:rgba(156,74,68,0.88); backdrop-filter:blur(3px);
+    color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9.5px; padding:2px 5px;
+    border-radius:4px; letter-spacing:.02em;
+  }
+  .book-meta{padding:0 1px;}
+  .book-meta .b-title{font-size:11.5px; color:var(--paper); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .book-meta .b-author{font-size:10.5px; color:var(--muted); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .no-date-flag{
+    font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); border:1px dashed var(--line-strong);
+    display:inline-block; padding:1px 5px; border-radius:3px; margin-top:-2px; cursor:help;
+  }
+
+  .empty-state{
+    text-align:center; padding:70px 20px; color:var(--paper-dim);
+  }
+  .empty-state .serif{font-size:20px; color:var(--paper); display:block; margin-bottom:8px;}
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(10,11,16,0.72); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal-card{
+    background:var(--bg-elevated); border:1px solid var(--line-strong); border-radius:16px;
+    max-width:640px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 30px 60px -20px rgba(0,0,0,0.7);
+    position:relative;
+  }
+  .modal-close{
+    position:absolute; top:14px; right:14px; width:32px; height:32px; border-radius:50%;
+    border:1px solid var(--line-strong); background:var(--card); color:var(--paper-dim);
+    cursor:pointer; font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center; z-index:2;
+  }
+  .modal-close:hover{color:var(--paper); border-color:var(--brass);}
+  .modal-body{display:flex; gap:22px; padding:26px;}
+  .modal-cover{width:150px; flex-shrink:0;}
+  .modal-cover .cover-frame{width:150px;}
+  .modal-info{flex:1; min-width:0;}
+  .modal-info .m-title{font-family:'Fraunces',serif; font-size:22px; font-weight:600; line-height:1.2; margin:0 0 6px;}
+  .modal-info .m-author{font-size:14px; color:var(--brass-light); margin-bottom:14px;}
+  .modal-stars{font-family:'JetBrains Mono',monospace; color:var(--brass); font-size:14px; margin-bottom:14px;}
+  .modal-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px 18px; font-size:12.5px; margin-bottom:16px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .modal-grid div{color:var(--muted);}
+  .modal-grid div b{color:var(--paper-dim); font-weight:500; display:block; font-size:10px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:2px;}
+  .modal-review{
+    border-top:1px dashed var(--line-strong); padding-top:14px; margin-top:6px;
+    font-size:13px; line-height:1.6; color:var(--paper-dim); white-space:pre-line;
+    max-height:220px; overflow-y:auto;
+  }
+  .modal-stamp{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--burgundy-light);
+    border:1px solid rgba(156,74,68,0.5); display:inline-block; padding:4px 10px; border-radius:4px;
+    letter-spacing:.06em; transform:rotate(-2deg); margin-top:14px;
+  }
+  @media(max-width:560px){
+    .modal-body{flex-direction:column; padding:22px;}
+    .modal-cover{width:110px;}
+    .modal-cover .cover-frame{width:110px;}
+  }
+
+  /* ---------- footer ---------- */
+  footer{padding:40px 0 60px; border-top:1px solid var(--line); margin-top:20px;}
+  footer .foot-inner{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--muted); font-family:'JetBrains Mono',monospace;}
+
+  /* scrollbar */
+  ::-webkit-scrollbar{width:9px; height:9px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--line-strong); border-radius:6px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">BIB.</span>
+      <span class="brand-name">Minha Biblioteca</span>
+    </div>
+    <nav class="site-nav">
+      <a href="#livros">Livros</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <p class="hero-tag">Ficha de leitura pessoal</p>
+    <p class="hero-number" id="heroCount">339</p>
+    <p class="hero-label">livros lidos</p>
+    <div class="hero-meta" id="heroMeta"></div>
+    <div class="callnumber" id="callNumber">EST. 2017–2026 · ACERVO PESSOAL</div>
+  </section>
+
+  <section id="dashboard">
+    <div class="section-head">
+      <span class="section-num mono">01</span>
+      <h2 class="section-title">Estatísticas</h2>
+    </div>
+
+    <div class="card-grid" id="statCards"></div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Livros por ano <span id="yearChartRange"></span></h3>
+        <svg id="yearChart" viewBox="0 0 640 190" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="chart-card">
+        <h3>Distribuição de notas <span class="mono">/ 5</span></h3>
+        <div class="rating-rows" id="ratingRows"></div>
+      </div>
+    </div>
+
+    <div class="chart-grid" style="margin-top:16px;">
+      <div class="chart-card">
+        <h3>Autores mais lidos</h3>
+        <div class="authors-list" id="authorsList"></div>
+      </div>
+      <div class="chart-card">
+        <div class="misc-row" style="margin-top:0; flex-direction:column;">
+          <div class="misc-pill" style="min-width:0;">
+            <div class="icard-tab">Maior livro</div>
+            <div class="title" id="longestTitle">—</div>
+            <div class="sub" id="longestSub">—</div>
+          </div>
+          <div class="misc-pill" style="min-width:0;">
+            <div class="icard-tab">Menor livro</div>
+            <div class="title" id="shortestTitle">—</div>
+            <div class="sub" id="shortestSub">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-grid" style="margin-top:16px;">
+      <div class="chart-card">
+        <h3>Ritmo de leitura</h3>
+        <div class="pace-grid" id="paceGrid"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Gêneros <span class="mono" id="genreStatus">classificando…</span></h3>
+        <div class="authors-list" id="genreList">
+          <div class="genre-loading">Consultando o Google Books para estimar o gênero de cada livro. Isso roda só no seu navegador e fica em cache — pode levar um instante na primeira visita.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="livros">
+    <div class="section-head">
+      <span class="section-num mono">02</span>
+      <h2 class="section-title">Livros</h2>
+    </div>
+    <p class="section-sub">Clique em uma capa para ver os detalhes da ficha. Clique nos gráficos acima para filtrar por ano, nota ou autor.</p>
+
+    <div id="readingBanner"></div>
+
+    <div class="filters">
+      <input type="search" id="searchInput" placeholder="Buscar por título ou autor…">
+      <div class="pill-group" id="statusPills">
+        <button class="pill-btn active" data-status="all">Todos</button>
+        <button class="pill-btn" data-status="read">Lidos</button>
+        <button class="pill-btn" data-status="currently-reading">Lendo</button>
+      </div>
+      <select id="authorSelect"><option value="">Todos os autores</option></select>
+      <select id="sortSelect">
+        <option value="date-desc">Lido: mais recente</option>
+        <option value="date-asc">Lido: mais antigo</option>
+        <option value="rating-desc">Nota: maior</option>
+        <option value="rating-asc">Nota: menor</option>
+        <option value="pages-desc">Páginas: mais</option>
+        <option value="pages-asc">Páginas: menos</option>
+        <option value="title-asc">Título: A–Z</option>
+      </select>
+      <span class="result-count" id="resultCount"></span>
+      <div id="activeChips" class="active-chips"></div>
+    </div>
+
+    <div id="shelfContainer"></div>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span id="footInfo"></span>
+    <span>capas via Open Library / Google Books · quando não encontradas, exibimos um cartão ilustrado</span>
+  </div>
+</footer>
+
+<script id="books-data" type="application/json">[{"id": "31300278", "t": "As Espiãs do Dia D", "a": "Ken Follett", "i13": "9788580414103", "i10": "8580414105", "r": null, "p": 583, "dr": null, "da": "2026/08/16", "sh": "currently-reading", "pub": "Editora Arqueiro", "bd": "Kindle Edition", "rv": null, "oy": 2001, "rc": 1}, {"id": "32620332", "t": "The Seven Husbands of Evelyn Hugo", "a": "Taylor Jenkins Reid", "i13": "9781501139239", "i10": "1501139231", "r": 5.0, "p": 389, "dr": "2026/08/16", "da": "2026/08/08", "sh": "read", "pub": "Atria Books", "bd": "Hardcover", "rv": null, "oy": 2017, "rc": 1}, {"id": "230824619", "t": "Death Row", "a": "Freida McFadden", "i13": "9781662532269", "i10": "1662532261", "r": 3.0, "p": 74, "dr": "2026/08/08", "da": "2026/08/08", "sh": "read", "pub": "Amazon Original Stories", "bd": "Kindle Edition", "rv": null, "oy": 2025, "rc": 1}, {"id": "195967140", "t": "The Teacher", "a": "Freida McFadden", "i13": "9781728296210", "i10": "1728296218", "r": 4.0, "p": 379, "dr": "2026/08/08", "da": "2026/08/02", "sh": "read", "pub": "Poisoned Pen Press", "bd": "Paperback", "rv": null, "oy": 2024, "rc": 1}, {"id": "35249663", "t": "Inspired: How to Create Tech Products Customers Love", "a": "Marty Cagan", "i13": "9781119387503", "i10": "1119387507", "r": 4.0, "p": 349, "dr": "2026/08/02", "da": "2026/07/12", "sh": "read", "pub": "Wiley", "bd": "Hardcover", "rv": null, "oy": 2008, "rc": 1}, {"id": "10843928", "t": "A Fúria dos Reis (As Crônicas de Gelo e Fogo, #2)", "a": "George R.R. Martin", "i13": "9788580440270", "i10": "8580440270", "r": 5.0, "p": 656, "dr": "2026/07/12", "da": "2026/03/20", "sh": "read", "pub": "Leya", "bd": "Paperback", "rv": null, "oy": 1998, "rc": 3, "rd": ["2026/03/20", "2026/05/04", "2026/07/12"]}, {"id": "21806284", "t": "Misery", "a": "Stephen King", "i13": null, "i10": null, "r": 4.0, "p": 326, "dr": "2021/05/20", "da": "2021/05/15", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 1987, "rc": 1}, {"id": "203255309", "t": "A FELICIDADE NEGADA", "a": "Domenico de Masi", "i13": "9789724426051", "i10": "972442605X", "r": 4.0, "p": 0, "dr": "2026/05/04", "da": "2026/04/27", "sh": "read", "pub": "EDIÇOES 70", "bd": "Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "54735586", "t": "O Homem Invisível", "a": "H.G. Wells", "i13": "9786550970031", "i10": "6550970032", "r": 3.0, "p": 176, "dr": "2026/04/26", "da": "2026/03/23", "sh": "read", "pub": "Principis", "bd": "Paperback", "rv": null, "oy": 1897, "rc": 1}, {"id": "25407237", "t": "Revival", "a": "Stephen King", "i13": "9781501121173", "i10": "1501121170", "r": 3.0, "p": 463, "dr": "2017/09/27", "da": "2017/08/18", "sh": "read", "pub": "Simon & Schuster Inc.", "bd": "Mass Market Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "51300362", "t": "Factfulness: O hábito libertador de só ter opiniões baseadas em fatos", "a": "Hans Rosling", "i13": "9788501116529", "i10": "8501116521", "r": 5.0, "p": 360, "dr": "2026/03/23", "da": "2026/03/20", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 2018, "rc": 1}, {"id": "31207410", "t": "Noite sobre as águas (Portuguese Edition)", "a": "Ken Follett", "i13": "9788580415643", "i10": "8580415640", "r": 4.0, "p": 568, "dr": "2026/03/20", "da": "2026/03/08", "sh": "read", "pub": "Editora Arqueiro", "bd": "Kindle Edition", "rv": null, "oy": 1991, "rc": 1}, {"id": "244074261", "t": "A arte de pensar claramente: Os erros de raciocínio que mais cometemos – e como evitá-los para tomar boas decisões (Portuguese Edition)", "a": "Rolf Dobelli", "i13": "9788543111612", "i10": "8543111617", "r": 4.0, "p": 397, "dr": "2026/03/05", "da": "2026/02/28", "sh": "read", "pub": "Editora Sextante", "bd": "Kindle Edition", "rv": null, "oy": 2011, "rc": 1}, {"id": "55363736", "t": "Se Não Fosse Você", "a": "Colleen Hoover", "i13": "9788501303868", "i10": "8501303860", "r": 4.0, "p": 400, "dr": "2026/03/08", "da": "2026/03/07", "sh": "read", "pub": "Galera", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "27172915", "t": "Dark Places", "a": "Gillian Flynn", "i13": "9780297855873", "i10": "0297855875", "r": 4.0, "p": 368, "dr": "2026/02/28", "da": "2026/02/17", "sh": "read", "pub": "Orion", "bd": "ebook", "rv": null, "oy": 2009, "rc": 1}, {"id": "45730370", "t": "A guerra dos tronos (As crônicas de gelo e fogo, #1)", "a": "George R.R. Martin", "i13": "9788554513566", "i10": "8554513568", "r": 5.0, "p": 1137, "dr": "2026/02/17", "da": "2026/01/10", "sh": "read", "pub": "Suma", "bd": "Kindle Edition", "rv": null, "oy": 1996, "rc": 1}, {"id": "29227773", "t": "Eu, Robô", "a": "Isaac Asimov", "i13": "9788576572039", "i10": "8576572036", "r": 3.0, "p": 277, "dr": "2026/01/10", "da": "2026/01/05", "sh": "read", "pub": "Editora Aleph", "bd": "Kindle Edition", "rv": null, "oy": 1950, "rc": 1}, {"id": "230396579", "t": "O segredo final (Robert Langdon, #6)", "a": "Dan Brown", "i13": "9786555658408", "i10": "6555658401", "r": 4.0, "p": 876, "dr": "2026/01/05", "da": "2025/12/29", "sh": "read", "pub": "Editora Arqueiro", "bd": "Kindle Edition", "rv": null, "oy": 2025, "rc": 1}, {"id": "215174135", "t": "O resgate: A sequência de A firma (Portuguese Edition)", "a": "John Grisham", "i13": "9786555656640", "i10": "6555656646", "r": 3.0, "p": 401, "dr": "2025/12/29", "da": "2025/12/27", "sh": "read", "pub": "Editora Arqueiro", "bd": "Kindle Edition", "rv": null, "oy": 2023, "rc": 1}, {"id": "41962180", "t": "Fogo & Sangue (A Targaryen History #1)", "a": "George R.R. Martin", "i13": "9788556510761", "i10": "8556510760", "r": 4.0, "p": 598, "dr": "2025/12/27", "da": "2025/12/12", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2018, "rc": 1}, {"id": "60858867", "t": "Nunca: O caminho para a guerra começa com um passo em falso", "a": "Ken Follett", "i13": "9786555652574", "i10": "6555652578", "r": 3.0, "p": 624, "dr": "2025/12/12", "da": "2025/11/20", "sh": "read", "pub": "Editora Arqueiro", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "54237794", "t": "A ilha do Dr. Moreau", "a": "H.G. Wells", "i13": "9786555520033", "i10": "6555520035", "r": 2.0, "p": 144, "dr": "2025/11/20", "da": "2025/11/10", "sh": "read", "pub": "Principis", "bd": "Paperback", "rv": null, "oy": 1896, "rc": 1}, {"id": "54735560", "t": "A Máquina do Tempo", "a": "H.G. Wells", "i13": "9786555520026", "i10": "6555520027", "r": 4.0, "p": 112, "dr": "2025/11/10", "da": "2025/11/02", "sh": "read", "pub": "Principis", "bd": "Paperback", "rv": null, "oy": 1895, "rc": 1}, {"id": "33787286", "t": "Blink: A decisão num piscar de olhos", "a": "Malcolm Gladwell", "i13": "9788543103594", "i10": "8543103592", "r": 3.0, "p": 239, "dr": "2025/11/02", "da": "2025/10/27", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "58830046", "t": "De Quanta Terra Precisa um Homem? E Outras Histórias", "a": "Leo Tolstoy", "i13": "9786555522372", "i10": "6555522372", "r": 5.0, "p": 96, "dr": "2025/10/27", "da": "2025/10/26", "sh": "read", "pub": "Principis", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "58311128", "t": "Gente Pobre", "a": "Fyodor Dostoevsky", "i13": "9786555522280", "i10": "6555522283", "r": 2.0, "p": 160, "dr": "2025/10/26", "da": "2025/10/20", "sh": "read", "pub": "Principis", "bd": "Paperback", "rv": null, "oy": 1846, "rc": 1}, {"id": "156740519", "t": "The Boys from Biloxi", "a": "John Grisham", "i13": "9780593470916", "i10": "0593470915", "r": 3.0, "p": 576, "dr": "2025/10/20", "da": "2025/09/20", "sh": "read", "pub": "Vintage", "bd": "Mass Market Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "241643539", "t": "O Garoto do Colorado", "a": "Stephen King", "i13": "9788556512666", "i10": "8556512666", "r": 3.0, "p": 144, "dr": "2025/09/20", "da": "2025/09/16", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "36569405", "t": "Livro das Mil e Uma Noites, Volume 02", "a": "Anonymous", "i13": "9788525065056", "i10": "8525065056", "r": 3.0, "p": 400, "dr": "2025/09/16", "da": "2025/08/27", "sh": "read", "pub": "Biblioteca Azul", "bd": "Paperback", "rv": null, "oy": 800, "rc": 1}, {"id": "6082315", "t": "Fora de série", "a": "Malcolm Gladwell", "i13": "9788575424483", "i10": "8575424483", "r": 4.0, "p": 288, "dr": "2025/08/27", "da": "2025/08/21", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": 2008, "rc": 1}, {"id": "6262794", "t": "Um Defeito de Cor", "a": "Ana Maria Gonçalves", "i13": "9788501071750", "i10": "8501071757", "r": 5.0, "p": 952, "dr": "2025/08/21", "da": "2025/07/12", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 2006, "rc": 1}, {"id": "16079664", "t": "Fahrenheit 451", "a": "Ray Bradbury", "i13": "9788525052247", "i10": "8525052248", "r": 2.0, "p": 215, "dr": "2025/07/12", "da": "2025/07/09", "sh": "read", "pub": "Globo", "bd": "Paperback", "rv": null, "oy": 1963, "rc": 1}, {"id": "63385683", "t": "Conto de fadas", "a": "Stephen King", "i13": "9788556511577", "i10": "8556511570", "r": 3.0, "p": 624, "dr": "2025/07/09", "da": "2025/06/25", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "33108033", "t": "O Homem de São Petersburgo", "a": "Ken Follett", "i13": "9788580416350", "i10": "8580416353", "r": 3.0, "p": 326, "dr": "2025/06/25", "da": "2025/06/21", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 1982, "rc": 1}, {"id": "36569360", "t": "Livro das Mil e Uma Noites, Volume 01", "a": "Anonymous", "i13": "9788525065049", "i10": "8525065048", "r": 4.0, "p": 464, "dr": "2025/06/21", "da": "2025/06/14", "sh": "read", "pub": "Biblioteca Azul", "bd": "Paperback", "rv": null, "oy": 800, "rc": 1}, {"id": "60916709", "t": "How the World Really Works: The Science Behind How We Got Here and Where We're Going", "a": "Vaclav Smil", "i13": "9780593297070", "i10": "0593297075", "r": 3.0, "p": 357, "dr": "2025/06/14", "da": "2025/05/17", "sh": "read", "pub": "Viking", "bd": "ebook", "rv": null, "oy": 2022, "rc": 1}, {"id": "219383114", "t": "Sussurros do passado", "a": "Charlie Donlea", "i13": "9786559576593", "i10": "6559576590", "r": 3.0, "p": 320, "dr": "2025/05/17", "da": "2025/05/10", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2024, "rc": 1}, {"id": "18755097", "t": "Xamã", "a": "Noah Gordon", "i13": "9788532504067", "i10": "853250406X", "r": 4.0, "p": 488, "dr": "2025/05/10", "da": "2025/04/26", "sh": "read", "pub": "Rocco", "bd": "Paperback", "rv": null, "oy": 1992, "rc": 1}, {"id": "230162342", "t": "A Primeira Segunda-Feira: Após sua carreira executiva (Portuguese Edition)", "a": "Flavia Perez", "i13": "9788594553546", "i10": "8594553544", "r": 2.0, "p": 219, "dr": "2025/04/26", "da": "2025/04/25", "sh": "read", "pub": "Literare Books", "bd": "Kindle Edition", "rv": null, "oy": null, "rc": 1}, {"id": "93793616", "t": "Gerenciamento De Ativos E Passivos", "a": "Dermine/Bissada", "i13": "9788522474318", "i10": "8522474311", "r": 3.0, "p": 0, "dr": "2025/04/25", "da": "2025/04/21", "sh": "read", "pub": "Atlas", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "42102934", "t": "O Terceiro Gémeo", "a": "Ken Follett", "i13": "9789722362566", "i10": "9722362569", "r": 4.0, "p": 432, "dr": "2025/04/21", "da": "2025/04/18", "sh": "read", "pub": "Editorial Presença", "bd": "Paperback", "rv": null, "oy": 1996, "rc": 1}, {"id": "60802073", "t": "Uma questão de química", "a": "Bonnie Garmus", "i13": null, "i10": null, "r": 5.0, "p": 384, "dr": "2025/04/18", "da": "2025/04/12", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "83520731", "t": "Antes de Partir", "a": "Charlie Donlea", "i13": "9786559572649", "i10": "6559572641", "r": 3.0, "p": 224, "dr": "2025/04/12", "da": "2025/04/08", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "43711202", "t": "Comece pelo porquê: Como grandes líderes inspiram pessoas e equipes a agir", "a": "Simon Sinek", "i13": "9788543106632", "i10": "854310663X", "r": 3.0, "p": 256, "dr": "2025/04/08", "da": "2025/04/01", "sh": "read", "pub": "Editora Sextante", "bd": "Paperback", "rv": null, "oy": 2009, "rc": 1}, {"id": "227552", "t": "10 Days to Faster Reading", "a": "The Princeton Language Institute", "i13": "9780446676670", "i10": "0446676675", "r": 1.0, "p": 206, "dr": "2025/04/01", "da": "2025/03/27", "sh": "read", "pub": "Grand Central Publishing", "bd": "Paperback", "rv": null, "oy": 2001, "rc": 1}, {"id": "219292342", "t": "Nexus", "a": "Yuval Noah Harari", "i13": "9788535937817", "i10": "8535937811", "r": 3.0, "p": 504, "dr": "2025/03/27", "da": "2025/03/04", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 2024, "rc": 1}, {"id": "43454887", "t": "O Fisico (Em Portugues do Brasil)", "a": "Noah Gordon", "i13": "9788532531261", "i10": "8532531261", "r": 5.0, "p": 592, "dr": "2025/03/03", "da": "2025/02/14", "sh": "read", "pub": "Rocco", "bd": "Hardcover", "rv": null, "oy": 1986, "rc": 1}, {"id": "23393236", "t": "Um Lugar Chamado Liberdade", "a": "Ken Follett", "i13": "9788580413304", "i10": "8580413303", "r": 3.0, "p": 400, "dr": "2025/02/14", "da": "2025/02/08", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 1995, "rc": 1}, {"id": "16211398", "t": "O Ponto da Virada: Como Pequenas Coisas Podem Fazer uma Grande Diferença", "a": "Malcolm Gladwell", "i13": "9788575424834", "i10": "8575424831", "r": 3.0, "p": 288, "dr": "2025/02/08", "da": "2025/01/12", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": 2000, "rc": 1}, {"id": "196433036", "t": "É a Ales", "a": "Jon Fosse", "i13": "9788535935424", "i10": "8535935428", "r": 2.0, "p": 112, "dr": "2025/01/12", "da": "2025/01/11", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 2004, "rc": 1}, {"id": "215788994", "t": "Olhos vazios (Portuguese Edition)", "a": "Charlie Donlea", "i13": "9786559576395", "i10": "6559576396", "r": 3.0, "p": 438, "dr": "2025/01/11", "da": "2025/01/07", "sh": "read", "pub": "Faro Editorial", "bd": "Kindle Edition", "rv": null, "oy": 2023, "rc": 1}, {"id": "63286774", "t": "Diga às abelhas que não estou mais aqui (Outlander, #9)", "a": "Diana Gabaldon", "i13": "9786555653779", "i10": "6555653779", "r": 3.0, "p": 1056, "dr": "2025/01/07", "da": "2024/11/17", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "1436908", "t": "Memorial de Aires (Classicos Da Literatura Brasileira)", "a": "Machado de Assis", "i13": "9780850515183", "i10": "0850515181", "r": 4.0, "p": 124, "dr": "2024/11/17", "da": "2024/11/15", "sh": "read", "pub": "Luso-Brazilian Books", "bd": "Paperback", "rv": null, "oy": 1908, "rc": 1}, {"id": "6383500", "t": "Esaú e Jacó", "a": "Machado de Assis", "i13": "9788508131914", "i10": "8508131917", "r": 3.0, "p": 240, "dr": "2024/11/15", "da": "2024/11/06", "sh": "read", "pub": "Editora Ática", "bd": "Paperback", "rv": null, "oy": 1904, "rc": 1}, {"id": "30237209", "t": "Uma vida pequena", "a": "Hanya Yanagihara", "i13": "9788501071545", "i10": "8501071544", "r": 4.0, "p": 784, "dr": "2024/11/06", "da": "2024/10/29", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 2015, "rc": 1}, {"id": "55736702", "t": "Escrito com o sangue do meu coração (Outlander, #8)", "a": "Diana Gabaldon", "i13": "9786555650518", "i10": "6555650516", "r": 4.0, "p": 896, "dr": "2024/10/28", "da": "2024/10/14", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "58556494", "t": "O ano do pensamento mágico", "a": "Joan Didion", "i13": "9786555111200", "i10": "6555111208", "r": 4.0, "p": 240, "dr": "2024/10/14", "da": "2024/10/05", "sh": "read", "pub": "HarperCollins", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "52336328", "t": "Ecos do futuro (Outlander #7)", "a": "Diana Gabaldon", "i13": "9788580419641", "i10": "8580419646", "r": 3.0, "p": 912, "dr": "2024/10/04", "da": "2024/09/04", "sh": "read", "pub": "Editora Arqueiro", "bd": "Paperback", "rv": null, "oy": 2009, "rc": 1}, {"id": "42944723", "t": "A História do Universo para quem tem pressa: Do Big Bang às mais recentes descobertas da astronomia!", "a": "Colin Stuart", "i13": "9788558890779", "i10": "8558890773", "r": 4.0, "p": 240, "dr": "2024/06/20", "da": "2024/06/15", "sh": "read", "pub": "Editora Valentina", "bd": "Kindle Edition", "rv": null, "oy": 2018, "rc": 1}, {"id": "34520458", "t": "Sleeping Beauties", "a": "Stephen King", "i13": "9781473665217", "i10": "1473665213", "r": 2.0, "p": 736, "dr": "2021/04/05", "da": "2021/03/20", "sh": "read", "pub": "Hodder & Stoughton", "bd": "Kindle Edition", "rv": "Difícil não gostar de um livro do stephen king, mas confesso que pra mim esse deixou a desejar. Extremamente longo (sem necessidade), muito personagens (é fácil se perder) e uma sensação de que a estória poderia render mais.\n\nAlgumas passagens muito infantis (os ratos fazendo uma pirâmide para abrir a cela).\n\nOutra coisa, se a Evie conseguiu matar o juiz à distância,  por que não fez o mesmo com os outros que a ameaçavam?\n\nDepois de um guerra, o psiquiatra consegue  convencer os invasores a não matar evie? Por que não conversaram antes?\n\nAchei fraco", "oy": 2017, "rc": 1}, {"id": "30071617", "t": "Best. State. Ever.: A Florida Man Defends His Homeland", "a": "Dave Barry", "i13": "9781101982624", "i10": "1101982624", "r": 3.0, "p": 240, "dr": "2017/12/17", "da": "2017/11/26", "sh": "read", "pub": "G.P. Putnam's Sons", "bd": "Kindle Edition", "rv": "Esperava mais, mas não chega a ser ruim. Interessante conhecer esses parque antigos e mais toscos na Florida. \n\nLeitura simples e rápida.", "oy": 2016, "rc": 1}, {"id": "208026080", "t": "MENSAGEIRO DAS ESTRELAS", "a": "Tyson Neil deGrasse", "i13": "9786555876697", "i10": "6555876697", "r": 5.0, "p": 0, "dr": "2024/05/26", "da": "2024/05/18", "sh": "read", "pub": "RECORD", "bd": "Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "53629484", "t": "Investimentos inteligentes - Edição revista e atualizada: Estratégias para multiplicar seu patrimônio com segurança e eficiência (Portuguese Edition)", "a": "Gustavo Cerbasi", "i13": "9788575429990", "i10": "857542999X", "r": 3.0, "p": 350, "dr": "2020/08/08", "da": "2020/07/31", "sh": "read", "pub": "Editora Sextante", "bd": "Kindle Edition", "rv": null, "oy": 2008, "rc": 1}, {"id": "32183222", "t": "A Filha Perdida", "a": "Elena Ferrante", "i13": "9788551000328", "i10": "8551000322", "r": 3.0, "p": 176, "dr": "2024/09/03", "da": "2024/09/01", "sh": "read", "pub": "Intrínseca", "bd": "Paperback", "rv": null, "oy": 2006, "rc": 1}, {"id": "210682218", "t": "História da menina perdida (Tetralogia Napolitana, #4)", "a": "Elena Ferrante", "i13": "9786558301967", "i10": "6558301962", "r": 5.0, "p": 488, "dr": "2024/09/01", "da": "2024/08/25", "sh": "read", "pub": "Biblioteca Azul", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "18750797", "t": "A Volta ao Mundo em Oitenta Dias", "a": "Jules Verne", "i13": null, "i10": "8513011150", "r": 5.0, "p": 318, "dr": "2022/01/23", "da": "2022/01/20", "sh": "read", "pub": "Nova Cultura", "bd": "Hardcover", "rv": null, "oy": 1872, "rc": 1}, {"id": "210681707", "t": "História de quem foge e de quem fica (Tetralogia Napolitana, #3)", "a": "Elena Ferrante", "i13": "9786558301929", "i10": "655830192X", "r": 5.0, "p": 424, "dr": "2024/08/25", "da": "2024/08/19", "sh": "read", "pub": "Biblioteca Azul", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "210393869", "t": "História do novo sobrenome (Tetralogia Napolitana, #2)", "a": "Elena Ferrante", "i13": "9786558301936", "i10": "6558301938", "r": 5.0, "p": 480, "dr": "2024/08/19", "da": "2024/08/11", "sh": "read", "pub": "Biblioteca Azul", "bd": "Paperback", "rv": null, "oy": 2012, "rc": 1}, {"id": "204594030", "t": "A amiga genial (Tetralogia Napolitana, #1)", "a": "Elena Ferrante", "i13": "9786558301912", "i10": "6558301911", "r": 4.0, "p": 340, "dr": "2024/08/11", "da": "2024/08/05", "sh": "read", "pub": "Biblioteca Azul", "bd": "Paperback", "rv": null, "oy": 2011, "rc": 1}, {"id": "49182468", "t": "Recursão", "a": "Blake Crouch", "i13": "9788551005361", "i10": "8551005367", "r": 4.0, "p": 320, "dr": "2024/08/05", "da": "2024/08/03", "sh": "read", "pub": "Intrínseca", "bd": "Hardcover", "rv": null, "oy": 2019, "rc": 1}, {"id": "201112405", "t": "Onde os velhos não têm vez", "a": "Cormac McCarthy", "i13": "9788556522061", "i10": "8556522068", "r": 3.0, "p": 256, "dr": "2024/08/03", "da": "2024/07/26", "sh": "read", "pub": "Alfaguara", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "39889503", "t": "Um sopro de neve e cinzas (Outlander, #6)", "a": "Diana Gabaldon", "i13": "9788580418057", "i10": "8580418054", "r": 3.0, "p": 1168, "dr": "2024/07/26", "da": "2024/06/29", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "40490410", "t": "Orgulho e preconceito (Portuguese Edition)", "a": "Jane Austen", "i13": "9788556710178", "i10": "8556710174", "r": 4.0, "p": 242, "dr": "2024/06/29", "da": "2024/06/23", "sh": "read", "pub": "Pe Da Letra", "bd": "Paperback", "rv": null, "oy": 1813, "rc": 1}, {"id": "29740255", "t": "The Choice", "a": "Nicholas Sparks", "i13": "9781455589005", "i10": "1455589004", "r": 3.0, "p": 327, "dr": "2024/01/27", "da": "2024/01/25", "sh": "read", "pub": "Grand Central Publishing", "bd": "Kindle Edition", "rv": null, "oy": 2007, "rc": 1}, {"id": "48803618", "t": "Viagem ao Centro da Terra", "a": "Jules Verne", "i13": "9788594318152", "i10": "8594318154", "r": 3.0, "p": 304, "dr": "2024/06/23", "da": "2024/06/20", "sh": "read", "pub": "Principis", "bd": "Paperback", "rv": null, "oy": 1864, "rc": 1}, {"id": "53702139", "t": "O estilo Disney", "a": "Bill Capodagli", "i13": "9788557171138", "i10": "8557171137", "r": 3.0, "p": 388, "dr": "2024/06/15", "da": "2024/06/02", "sh": "read", "pub": "Saraiva Uni", "bd": "Kindle Edition", "rv": null, "oy": 1998, "rc": 1}, {"id": "165940883", "t": "Holly (Holly Gibney, #3)", "a": "Stephen King", "i13": "9788556511928", "i10": "8556511929", "r": 4.0, "p": 448, "dr": "2024/06/02", "da": "2024/05/26", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2023, "rc": 1}, {"id": "53026361", "t": "Notre-Dame: A história de uma catedral", "a": "Ken Follett", "i13": null, "i10": null, "r": 3.0, "p": null, "dr": "2024/05/18", "da": "2024/05/18", "sh": "read", "pub": null, "bd": "ebook", "rv": null, "oy": 2019, "rc": 1}, {"id": "42964610", "t": "Lean Inception: Como alinhar pessoas e construir o produto certo", "a": "Paulo Caroli", "i13": "9788594377067", "i10": "8594377061", "r": 3.0, "p": 159, "dr": "2024/05/18", "da": "2024/05/18", "sh": "read", "pub": "Editora Caroli", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "41582153", "t": "Razão e Sensibilidade", "a": "Jane Austen", "i13": "9788595200999", "i10": "8595200998", "r": 3.0, "p": 355, "dr": "2024/05/18", "da": "2024/05/04", "sh": "read", "pub": "Pe da Letra", "bd": "Paperback", "rv": null, "oy": 1811, "rc": 1}, {"id": "19571674", "t": "Tereza Batista Cansada de Guerra", "a": "Jorge Amado", "i13": "9788535912913", "i10": "8535912916", "r": 4.0, "p": 472, "dr": "2024/05/04", "da": "2024/04/27", "sh": "read", "pub": "Companhia das Letras", "bd": "Hardcover", "rv": null, "oy": 1972, "rc": 1}, {"id": "199501299", "t": "A Armadura da Luz (Kingsbridge, #4)", "a": "Ken Follett", "i13": "9786555655377", "i10": "6555655372", "r": 4.0, "p": 640, "dr": "2024/04/27", "da": "2024/04/14", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2023, "rc": 1}, {"id": "49636297", "t": "A Firma (Em Portugues do Brasil)", "a": "John Grisham", "i13": "9788580419856", "i10": "8580419859", "r": 4.0, "p": null, "dr": "2022/02/12", "da": "2022/02/08", "sh": "read", "pub": "Editora Arqueiro", "bd": "Paperback", "rv": null, "oy": 1991, "rc": 1}, {"id": "42778782", "t": "Persuasão", "a": "Jane Austen", "i13": "9788595201095", "i10": "8595201099", "r": 3.0, "p": 232, "dr": "2024/03/28", "da": "2024/03/20", "sh": "read", "pub": "Pé da Letra", "bd": "Paperback", "rv": null, "oy": 1817, "rc": 1}, {"id": "3145246", "t": "Ponto de Impacto", "a": "Dan Brown", "i13": null, "i10": null, "r": 3.0, "p": 448, "dr": "2024/03/20", "da": "2024/03/14", "sh": "read", "pub": "Editora Sextante", "bd": "Paperback", "rv": null, "oy": 2001, "rc": 1}, {"id": "31448669", "t": "Tripulação de esqueletos", "a": "Stephen King", "i13": "9788560280926", "i10": "8560280928", "r": 3.0, "p": 624, "dr": "2024/03/13", "da": "2024/02/13", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 1985, "rc": 1}, {"id": "35614195", "t": "Origem (Robert Langdon, #5)", "a": "Dan Brown", "i13": "9788580417661", "i10": "858041766X", "r": 4.0, "p": 432, "dr": "2018/01/20", "da": "2017/12/28", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": "Segue exatamente o mesmo modelo dos outros livros, acho que já está ficando meio batido.\n\nMas no geral gostei.\n\nO final foi fácil de sacar e pode ser um pouco difícil para quem não está tão habituado com TI.\n\n", "oy": 2017, "rc": 1}, {"id": "20747921", "t": "Hornet Flight", "a": "Ken Follett", "i13": "9781743035498", "i10": "1743035497", "r": 4.0, "p": 484, "dr": "2024/01/25", "da": "2024/01/20", "sh": "read", "pub": "Macmillan", "bd": "Kindle Edition", "rv": null, "oy": 2002, "rc": 1}, {"id": "63883339", "t": "Hamnet", "a": "Maggie O'Farrell", "i13": "9786555602210", "i10": "655560221X", "r": 4.0, "p": 384, "dr": "2024/01/20", "da": "2024/01/12", "sh": "read", "pub": "Intrínseca", "bd": "Hardcover", "rv": null, "oy": 2020, "rc": 1}, {"id": "31559368", "t": "Biblioteca de Almas (Miss Peregrine's Peculiar Children, #3)", "a": "Ransom Riggs", "i13": "9788580579666", "i10": "858057966X", "r": 3.0, "p": 416, "dr": "2024/01/12", "da": "2024/01/02", "sh": "read", "pub": "Intrínseca", "bd": "Hardcover", "rv": null, "oy": 2015, "rc": 1}, {"id": "126495227", "t": "O Menino Que Desenhou Auschwitz", "a": "Thomas Geve", "i13": "9786555208863", "i10": "6555208864", "r": 4.0, "p": 304, "dr": "2023/07/16", "da": "2023/07/11", "sh": "read", "pub": "Alta Life", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "41074301", "t": "12 Lições da História. Para Entender o Mundo", "a": "Will Durant", "i13": "9788595810181", "i10": "8595810184", "r": 3.0, "p": 128, "dr": "2021/04/06", "da": "2021/04/05", "sh": "read", "pub": "Faro", "bd": "Paperback", "rv": null, "oy": 1968, "rc": 1}, {"id": "59120980", "t": "A Biblioteca da Meia-Noite", "a": "Matt Haig", "i13": "9786558380542", "i10": "6558380544", "r": 4.0, "p": 308, "dr": "2024/01/02", "da": "2023/12/31", "sh": "read", "pub": "Bertrand Brasil", "bd": "Paperback", "rv": null, "oy": 2020, "rc": 1}, {"id": "43472981", "t": "A cruz de fogo (Outlander #5)", "a": "Diana Gabaldon", "i13": "9788580418248", "i10": "8580418240", "r": 3.0, "p": 1120, "dr": "2023/12/31", "da": "2023/11/25", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2001, "rc": 1}, {"id": "119670932", "t": "A loteria e outros contos (Portuguese Edition)", "a": "Shirley Jackson", "i13": "9786557827390", "i10": "6557827391", "r": 3.0, "p": 336, "dr": "2023/09/30", "da": "2023/09/21", "sh": "read", "pub": "Alfaguara", "bd": "Kindle Edition", "rv": null, "oy": 1949, "rc": 1}, {"id": "13607535", "t": "Um Amor para Recordar", "a": "Nicholas Sparks", "i13": "9788563219268", "i10": "856321926X", "r": 3.0, "p": 184, "dr": "2023/11/25", "da": "2023/11/25", "sh": "read", "pub": "Novo Conceito", "bd": "Paperback", "rv": null, "oy": 1999, "rc": 1}, {"id": "68921339", "t": "FALCAO MALTES , O", "a": "Dashiell Hammett", "i13": "9786556661551", "i10": "6556661554", "r": 4.0, "p": 0, "dr": "2023/11/25", "da": "2023/11/12", "sh": "read", "pub": "Editora: LPM", "bd": "Paperback", "rv": null, "oy": 1930, "rc": 1}, {"id": "36355970", "t": "Coluna de Fogo (Kingsbridge, #3)", "a": "Ken Follett", "i13": "9788580417340", "i10": "8580417341", "r": 5.0, "p": 816, "dr": "2023/11/12", "da": "2023/11/02", "sh": "read", "pub": "Editora Arqueiro", "bd": "Paperback", "rv": null, "oy": 2017, "rc": 1}, {"id": "12356946", "t": "ABC de Castro Alves", "a": "Jorge Amado", "i13": "9788535916591", "i10": "8535916598", "r": 4.0, "p": 304, "dr": "2023/11/02", "da": "2023/10/30", "sh": "read", "pub": "Companhia das Letras", "bd": "Brochura", "rv": null, "oy": 1971, "rc": 1}, {"id": "23164983", "t": "Hollow City (Miss Peregrine's Peculiar Children, #2)", "a": "Ransom Riggs", "i13": "9781594747359", "i10": "1594747350", "r": 3.0, "p": 412, "dr": "2023/10/30", "da": "2023/10/21", "sh": "read", "pub": "Quirk Books", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "25107189", "t": "Escuridão Total Sem Estrelas", "a": "Stephen King", "i13": "9788581052755", "i10": "8581052754", "r": 4.0, "p": 392, "dr": "2023/10/21", "da": "2023/10/13", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 2011, "rc": 1}, {"id": "33120173", "t": "O Lar da Srta. Peregrine para Crianças Peculiares (Miss Peregrine’s Peculiar Children #1)", "a": "Ransom Riggs", "i13": "9788551000687", "i10": "8551000683", "r": 4.0, "p": 352, "dr": "2023/10/13", "da": "2023/10/07", "sh": "read", "pub": "Intrínseca", "bd": "Hardcover", "rv": null, "oy": 2011, "rc": 1}, {"id": "50759246", "t": "O Tempo em Marte", "a": "Philip K. Dick", "i13": "9788576574743", "i10": "8576574748", "r": 3.0, "p": 320, "dr": "2023/10/07", "da": "2023/10/01", "sh": "read", "pub": "Aleph", "bd": "Paperback", "rv": null, "oy": 1964, "rc": 1}, {"id": "61605336", "t": "O despertar de tudo: Uma nova história da humanidade", "a": "David Graeber", "i13": "9786559211722", "i10": "655921172X", "r": 3.0, "p": 696, "dr": "2023/10/01", "da": "2023/01/25", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "61144383", "t": "Sobre a Brevidade da Vida", "a": "Seneca", "i13": "9786587817668", "i10": "6587817661", "r": 3.0, "p": 96, "dr": "2023/09/07", "da": "2023/09/05", "sh": "read", "pub": "Camelot Editora", "bd": "Paperback", "rv": null, "oy": 49, "rc": 1}, {"id": "10988", "t": "Drums of Autumn (Outlander, #4)", "a": "Diana Gabaldon", "i13": "9780385335980", "i10": "0385335989", "r": 4.0, "p": 880, "dr": "2023/09/05", "da": "2023/07/27", "sh": "read", "pub": "Dell", "bd": "Paperback", "rv": null, "oy": 1996, "rc": 1}, {"id": "39325604", "t": "O Resgate no Mar (Outlander)", "a": "Diana Gabaldon", "i13": "9788580418224", "i10": "8580418224", "r": 4.0, "p": 992, "dr": "2023/02/24", "da": "2023/02/09", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 1993, "rc": 1}, {"id": "13453039", "t": "Terras do sem-fim", "a": "Jorge Amado", "i13": "9788535912524", "i10": "8535912524", "r": 3.0, "p": 280, "dr": "2023/07/27", "da": "2023/07/17", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1943, "rc": 1}, {"id": "51187279", "t": "Capitães da Areia", "a": "Jorge Amado", "i13": null, "i10": null, "r": 5.0, "p": 283, "dr": "2021/08/09", "da": "2021/08/04", "sh": "read", "pub": null, "bd": "Unknown Binding", "rv": null, "oy": 1937, "rc": 1}, {"id": "9975759", "t": "Cacau", "a": "Jorge Amado", "i13": "9788535917260", "i10": "8535917268", "r": 3.0, "p": 184, "dr": "2023/03/28", "da": "2023/03/26", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1933, "rc": 1}, {"id": "49659543", "t": "Torto arado", "a": "Itamar Vieira Junior", "i13": "9786580309313", "i10": "6580309318", "r": 4.0, "p": 262, "dr": "2023/07/11", "da": "2023/06/27", "sh": "read", "pub": "Todavia", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "28004209", "t": "Mundo Sem Fim (The Pillars of the Earth, #2)", "a": "Ken Follett", "i13": "9788580414738", "i10": "8580414733", "r": 4.0, "p": 1136, "dr": "2023/06/27", "da": "2023/06/01", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2007, "rc": 1}, {"id": "15789410", "t": "Os Pilares da Terra (Os pilares da Terra, #1)", "a": "Ken Follett", "i13": "9788532527691", "i10": "8532527698", "r": 5.0, "p": 943, "dr": "2023/06/01", "da": "2023/05/03", "sh": "read", "pub": "Rocco", "bd": "Hardcover", "rv": null, "oy": 1989, "rc": 1}, {"id": "58065346", "t": "A Time for Mercy (Jake Brigance, #3)", "a": "John Grisham", "i13": null, "i10": null, "r": 4.0, "p": 640, "dr": "2023/05/03", "da": "2023/04/05", "sh": "read", "pub": "Vintage", "bd": "Mass Market Paperback", "rv": null, "oy": 2020, "rc": 1}, {"id": "41134326", "t": "Espere agora pelo ano passado", "a": "Philip K. Dick", "i13": "9788556510730", "i10": "8556510736", "r": 2.0, "p": 296, "dr": "2023/04/04", "da": "2023/03/30", "sh": "read", "pub": "Suma", "bd": "Hardcover", "rv": null, "oy": 1966, "rc": 1}, {"id": "18106902", "t": "Suor", "a": "Jorge Amado", "i13": "9788535917925", "i10": "8535917926", "r": 3.0, "p": 160, "dr": "2023/03/30", "da": "2023/03/28", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1934, "rc": 1}, {"id": "55037002", "t": "O crepúsculo e a aurora", "a": "Ken Follett", "i13": "9786555650181", "i10": "6555650184", "r": 5.0, "p": 704, "dr": "2023/03/26", "da": "2023/03/14", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2020, "rc": 1}, {"id": "81071809", "t": "A lista do juiz (The Whistler, #2)", "a": "John Grisham", "i13": "9786555653953", "i10": "6555653957", "r": 3.0, "p": 320, "dr": "2023/03/14", "da": "2023/03/09", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "2278184", "t": "O Sumiço Da Santa: Uma história de feitiçaria", "a": "Jorge Amado", "i13": "9788510344470", "i10": "8510344477", "r": 4.0, "p": 438, "dr": "2023/03/06", "da": "2023/02/26", "sh": "read", "pub": "Editora Record", "bd": "Paperback", "rv": null, "oy": 1988, "rc": 1}, {"id": "39902406", "t": "O tempo desconjuntado", "a": "Philip K. Dick", "i13": "9788556510662", "i10": "8556510663", "r": 3.0, "p": 272, "dr": "2023/02/26", "da": "2023/02/25", "sh": "read", "pub": "Suma", "bd": "Hardcover", "rv": null, "oy": 1959, "rc": 1}, {"id": "19459680", "t": "O País do Carnaval", "a": "Jorge Amado", "i13": "9788535917987", "i10": "8535917985", "r": 3.0, "p": 176, "dr": "2023/01/25", "da": "2023/01/24", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1930, "rc": 1}, {"id": "42268200", "t": "O buraco da agulha", "a": "Ken Follett", "i13": "9788580418811", "i10": "858041881X", "r": 4.0, "p": 336, "dr": "2023/01/24", "da": "2023/01/20", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 1978, "rc": 1}, {"id": "22662729", "t": "A Dança da Morte", "a": "Stephen King", "i13": null, "i10": null, "r": 3.0, "p": 1248, "dr": "2023/01/20", "da": "2022/12/19", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 1978, "rc": 1}, {"id": "22305401", "t": "Eternidade por um Fio (O Século, #3)", "a": "Ken Follett", "i13": "9788580412918", "i10": "8580412919", "r": 5.0, "p": 1071, "dr": "2022/12/19", "da": "2022/12/04", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "16050127", "t": "Inverno do Mundo (O Século, #2)", "a": "Ken Follett", "i13": "9788580410891", "i10": "8580410894", "r": 5.0, "p": 875, "dr": "2022/12/04", "da": "2022/11/06", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2012, "rc": 1}, {"id": "59342296", "t": "Procure nas Cinzas", "a": "Charlie Donlea", "i13": "9786559570287", "i10": "6559570282", "r": 4.0, "p": 356, "dr": "2022/11/06", "da": "2022/11/02", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "17974855", "t": "À Espera de um Milagre", "a": "Stephen King", "i13": "9788581050379", "i10": "8581050379", "r": 5.0, "p": 400, "dr": "2022/11/02", "da": "2022/10/17", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 1996, "rc": 1}, {"id": "23447446", "t": "Casei Com Um Comunista (The American Trilogy, #2)", "a": "Philip Roth", "i13": "9788535925128", "i10": "8535925120", "r": 3.0, "p": 360, "dr": "2022/10/17", "da": "2022/09/15", "sh": "read", "pub": "Companhia de Bolso", "bd": "Pocket", "rv": null, "oy": 1998, "rc": 1}, {"id": "5123368", "t": "O Cliente", "a": "John Grisham", "i13": "9788532504814", "i10": "8532504817", "r": 4.0, "p": 430, "dr": "2022/09/15", "da": "2022/09/09", "sh": "read", "pub": "Rocco", "bd": "Paperback", "rv": null, "oy": 1993, "rc": 1}, {"id": "61683286", "t": "Escravidão, Volume 3: Da Independência do Brasil à Lei Áurea", "a": "Laurentino Gomes", "i13": "9786559870523", "i10": "6559870529", "r": 4.0, "p": 592, "dr": "2022/09/09", "da": "2022/08/18", "sh": "read", "pub": "Globo Livros", "bd": "Paperback", "rv": null, "oy": 2022, "rc": 1}, {"id": "39933650", "t": "Tocaia Grande - A Face Obscura", "a": "Jorge Amado", "i13": null, "i10": null, "r": 4.0, "p": 505, "dr": "2022/08/18", "da": "2022/08/05", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 1984, "rc": 1}, {"id": "37845303", "t": "Deixada Para Trás", "a": "Charlie Donlea", "i13": "9788595810082", "i10": "8595810087", "r": 3.0, "p": 368, "dr": "2022/08/05", "da": "2022/07/31", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2017, "rc": 1}, {"id": "10387489", "t": "Queda de Gigantes (O Século, #1)", "a": "Ken Follett", "i13": "9788599296851", "i10": "859929685X", "r": 5.0, "p": 912, "dr": "2022/07/31", "da": "2022/07/05", "sh": "read", "pub": "Editora Arqueiro", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "12902236", "t": "Jubiabá", "a": "Jorge Amado", "i13": "9788535913545", "i10": "8535913548", "r": 3.0, "p": 360, "dr": "2022/07/05", "da": "2022/06/29", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1935, "rc": 1}, {"id": "17563141", "t": "Traição em Veneza (Cotton Malone, #3)", "a": "Steve Berry", "i13": "9788501087591", "i10": "8501087599", "r": 3.0, "p": 574, "dr": "2022/06/29", "da": "2022/06/24", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 2007, "rc": 1}, {"id": "45309823", "t": "Ponto Cego (Em Portugues do Brasil)", "a": "Lya Luft", "i13": "9788501066084", "i10": "8501066087", "r": 3.0, "p": 0, "dr": "2022/06/24", "da": "2022/06/23", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 1999, "rc": 1}, {"id": "38715618", "t": "A Libélula no Âmbar (Outlander)", "a": "Diana Gabaldon", "i13": "9788580417890", "i10": "8580417899", "r": 4.0, "p": 880, "dr": "2022/06/23", "da": "2022/06/11", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 1992, "rc": 1}, {"id": "55736733", "t": "Cartada Final", "a": "John Grisham", "i13": "9786555650471", "i10": "6555650478", "r": 4.0, "p": 320, "dr": "2022/06/11", "da": "2022/06/05", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "7861957", "t": "Mar Morto", "a": "Jorge Amado", "i13": "9788535911824", "i10": "8535911820", "r": 5.0, "p": 288, "dr": "2022/06/05", "da": "2022/05/31", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1936, "rc": 1}, {"id": "22489270", "t": "A Maldição", "a": "Richard Bachman", "i13": "9788581050492", "i10": "8581050492", "r": 3.0, "p": 287, "dr": "2022/05/30", "da": "2022/05/13", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 1984, "rc": 1}, {"id": "55676275", "t": "Fundação (Fundação, #1)", "a": "Isaac Asimov", "i13": "9788576571735", "i10": "8576571730", "r": 2.0, "p": 288, "dr": "2022/05/13", "da": "2022/05/07", "sh": "read", "pub": "Aleph", "bd": "Kindle Edition", "rv": null, "oy": 1951, "rc": 1}, {"id": "55363451", "t": "Nunca Saia Sozinho", "a": "Charlie Donlea", "i13": "9786586041361", "i10": "6586041368", "r": 3.0, "p": 352, "dr": "2022/05/07", "da": "2022/05/04", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2020, "rc": 1}, {"id": "38715636", "t": "Outlander: A Viajante Do Tempo", "a": "Diana Gabaldon", "i13": "9788580418217", "i10": "8580418216", "r": 4.0, "p": 752, "dr": "2022/05/04", "da": "2022/04/21", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 1991, "rc": 1}, {"id": "58750384", "t": "Love: A história de Lisey", "a": "Stephen King", "i13": "9788556511225", "i10": "8556511228", "r": 2.0, "p": 536, "dr": "2022/04/21", "da": "2022/03/30", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": "O livro tem momentos bons e momentos cansativos, longos e chatos. No geral achei fraco.\n\nPs: alguém contou quantas vezes aparece a palavra joça na tradução em português? Rsrs tive a impressão que foram umas mil rsrs", "oy": 2006, "rc": 1}, {"id": "59057760", "t": "A Cidadela", "a": "A.J. Cronin", "i13": "9786558470304", "i10": "6558470306", "r": 5.0, "p": 518, "dr": "2022/03/30", "da": "2022/03/23", "sh": "read", "pub": "José Olympio", "bd": "Paperback", "rv": null, "oy": 1937, "rc": 1}, {"id": "8513213", "t": "A Intimação", "a": "John Grisham", "i13": "9788532514356", "i10": "8532514359", "r": 3.0, "p": 283, "dr": "2022/03/23", "da": "2022/03/18", "sh": "read", "pub": "Rocco", "bd": "Paperback", "rv": null, "oy": 2002, "rc": 1}, {"id": "38355410", "t": "Elevation", "a": "Stephen King", "i13": "9781982102319", "i10": "1982102314", "r": 3.0, "p": 146, "dr": "2022/03/18", "da": "2019/04/06", "sh": "read", "pub": "Scribner", "bd": "Hardcover", "rv": null, "oy": 2018, "rc": 1}, {"id": "45175925", "t": "Angústia", "a": "Graciliano Ramos", "i13": "9788501115942", "i10": "8501115940", "r": 3.0, "p": 368, "dr": "2022/03/05", "da": "2022/03/03", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 1936, "rc": 1}, {"id": "9975627", "t": "Dona Flor e seus Dois Maridos", "a": "Jorge Amado", "i13": "9788535911701", "i10": "8535911707", "r": 5.0, "p": 488, "dr": "2022/03/15", "da": "2022/03/05", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1966, "rc": 1}, {"id": "40144661", "t": "1565: Enquanto o Brasil Nascia", "a": "Pedro Doria", "i13": "9788595082069", "i10": "8595082065", "r": 3.0, "p": 304, "dr": "2022/03/03", "da": "2022/02/28", "sh": "read", "pub": "HarperCollins Brasil", "bd": "Paperback", "rv": null, "oy": 2012, "rc": 1}, {"id": "41715192", "t": "Não Confie em Ninguém", "a": "Charlie Donlea", "i13": "9788595810433", "i10": "8595810435", "r": 3.0, "p": 352, "dr": "2022/02/28", "da": "2022/02/26", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2018, "rc": 1}, {"id": "20939167", "t": "Dália Negra (L.A. Quartet, #1)", "a": "James Ellroy", "i13": "9788577993482", "i10": "8577993485", "r": 5.0, "p": 448, "dr": "2022/02/26", "da": "2022/02/20", "sh": "read", "pub": "Edições BestBolso", "bd": "Paperback", "rv": null, "oy": 1987, "rc": 1}, {"id": "27556426", "t": "Christine", "a": "Stephen King", "i13": "9788560280872", "i10": "8560280871", "r": 4.0, "p": 616, "dr": "2022/02/20", "da": "2022/02/15", "sh": "read", "pub": "Suma das Letras", "bd": "Paperback", "rv": null, "oy": 1983, "rc": 1}, {"id": "17883125", "t": "Bravura indômita", "a": "Charles Portis", "i13": "9788579620430", "i10": "8579620430", "r": 4.0, "p": 192, "dr": "2022/02/15", "da": "2022/02/13", "sh": "read", "pub": "Alfaguara", "bd": "Paperback", "rv": null, "oy": 1968, "rc": 1}, {"id": "3452306", "t": "O Gênio do Crime", "a": "João Carlos Marinho", "i13": "9788526010475", "i10": "8526010476", "r": 4.0, "p": 144, "dr": "2022/02/13", "da": "2022/02/12", "sh": "read", "pub": "Editora Global", "bd": "Paperback", "rv": null, "oy": 1969, "rc": 1}, {"id": "56932003", "t": "Agosto", "a": "Rubem Fonseca", "i13": "9788520938065", "i10": null, "r": 5.0, "p": 368, "dr": "2022/01/02", "da": "2021/12/31", "sh": "read", "pub": "Nova Fronteira", "bd": "Paperback", "rv": null, "oy": 1990, "rc": 1}, {"id": "15779325", "t": "A Assustadora História da Medicina", "a": "Richard Gordon", "i13": "9788500928413", "i10": "8500928417", "r": 2.0, "p": 223, "dr": "2022/02/08", "da": "2022/02/06", "sh": "read", "pub": "Ediouro", "bd": "Paperback", "rv": null, "oy": 1993, "rc": 1}, {"id": "5152227", "t": "Eram os Deuses Astronautas?", "a": "Erich von Däniken", "i13": null, "i10": null, "r": 2.0, "p": 180, "dr": "2022/02/06", "da": "2022/02/04", "sh": "read", "pub": "Melhoramentos", "bd": "Paperback", "rv": null, "oy": 1968, "rc": 1}, {"id": "26059962", "t": "Um Porto Seguro", "a": "Nicholas Sparks", "i13": "9788581630045", "i10": "8581630049", "r": 3.0, "p": 384, "dr": "2022/02/04", "da": "2022/01/31", "sh": "read", "pub": "Novo Conceito", "bd": "Paperback", "rv": null, "oy": 2010, "rc": 1}, {"id": "239100", "t": "Digital Fortress", "a": "Dan Brown", "i13": "9780312995423", "i10": "0312995423", "r": 3.0, "p": 431, "dr": "2022/01/31", "da": "2022/01/28", "sh": "read", "pub": "St. Martin's Paperbacks", "bd": "Paperback", "rv": null, "oy": 1998, "rc": 1}, {"id": "46045505", "t": "Tempo Estranho", "a": "Joe Hill", "i13": "9788595083219", "i10": "8595083215", "r": 3.0, "p": 448, "dr": "2022/01/28", "da": "2022/01/23", "sh": "read", "pub": "HarperCollins", "bd": "Paperback", "rv": null, "oy": 2017, "rc": 1}, {"id": "54788992", "t": "O Livro da Economia", "a": "Niall Kishtainy", "i13": "9788525067210", "i10": "8525067210", "r": 3.0, "p": 352, "dr": "2020/09/07", "da": "2020/08/16", "sh": "read", "pub": "Globo", "bd": "Hardcover", "rv": null, "oy": 2012, "rc": 1}, {"id": "56273279", "t": "O dossiê pelicano", "a": "John Grisham", "i13": "9788530601232", "i10": "8530601238", "r": 4.0, "p": null, "dr": "2022/01/20", "da": "2022/01/15", "sh": "read", "pub": "Editora Arqueiro", "bd": "Mass Market Paperback", "rv": null, "oy": 1992, "rc": 1}, {"id": "25577381", "t": "O Sono Eterno (Philip Marlowe, #1)", "a": "Raymond Chandler", "i13": "9788579623950", "i10": "8579623952", "r": 3.0, "p": 256, "dr": "2022/01/15", "da": "2022/01/12", "sh": "read", "pub": "Alfaguara Brasil", "bd": "Paperback", "rv": null, "oy": 1939, "rc": 1}, {"id": "34212005", "t": "A Garota do Lago", "a": "Charlie Donlea", "i13": "9788562409882", "i10": "856240988X", "r": 3.0, "p": 296, "dr": "2022/01/12", "da": "2022/01/08", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2016, "rc": 1}, {"id": "48983646", "t": "Mulheres Empilhadas", "a": "Patrícia Melo", "i13": "9788577346882", "i10": "8577346889", "r": 3.0, "p": 240, "dr": "2022/01/08", "da": "2022/01/02", "sh": "read", "pub": "Leya", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "42431973", "t": "A última noite do mundo", "a": "C.S. Lewis", "i13": "9788578607593", "i10": "8578607597", "r": 3.0, "p": 144, "dr": "2021/12/31", "da": "2021/12/30", "sh": "read", "pub": "Thomas Nelson Brasil", "bd": "Hardcover", "rv": null, "oy": 1960, "rc": 1}, {"id": "40803490", "t": "Celular", "a": "Stephen King", "i13": "9788556510723", "i10": "8556510723", "r": 3.0, "p": 384, "dr": "2021/12/30", "da": "2021/12/26", "sh": "read", "pub": "Suma de Letras", "bd": "Paperback", "rv": null, "oy": 2006, "rc": 1}, {"id": "9114532", "t": "Querido John", "a": "Nicholas Sparks", "i13": "9788563219022", "i10": "8563219022", "r": 3.0, "p": 287, "dr": "2021/12/23", "da": "2021/12/19", "sh": "read", "pub": "Novo Conceito", "bd": "Paperback", "rv": null, "oy": 2006, "rc": 1}, {"id": "45020982", "t": "Uma Mulher na Escuridão", "a": "Charlie Donlea", "i13": "9788595810723", "i10": "8595810729", "r": 3.0, "p": 304, "dr": "2021/12/26", "da": "2021/12/23", "sh": "read", "pub": "Faro Editorial", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "18480381", "t": "Tenda dos Milagres", "a": "Jorge Amado", "i13": "9788535912906", "i10": "8535912908", "r": 2.0, "p": 320, "dr": "2021/12/19", "da": "2021/12/07", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1969, "rc": 1}, {"id": "19451198", "t": "Robinson Crusoé", "a": "Daniel Defoe", "i13": "9788563560414", "i10": "8563560417", "r": 5.0, "p": 408, "dr": "2021/12/07", "da": "2021/12/03", "sh": "read", "pub": "Penguin - Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1719, "rc": 1}, {"id": "45021607", "t": "Uma mulher no escuro", "a": "Raphael Montes", "i13": "9788535931761", "i10": "8535931767", "r": 4.0, "p": 256, "dr": "2021/12/03", "da": "2021/11/28", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "18904467", "t": "Time and Again (Time, #1)", "a": "Jack Finney", "i13": null, "i10": "0575093153", "r": 3.0, "p": 393, "dr": "2021/11/28", "da": "2021/11/16", "sh": "read", "pub": "Gateway", "bd": "Kindle Edition", "rv": null, "oy": 1970, "rc": 1}, {"id": "15945726", "t": "A Noite dos Tempos", "a": "René Barjavel", "i13": null, "i10": null, "r": 3.0, "p": 186, "dr": "2021/11/16", "da": "2021/11/15", "sh": "read", "pub": "Artenova", "bd": "Paperback", "rv": null, "oy": 1968, "rc": 1}, {"id": "58836845", "t": "A Psicologia da Estupidez", "a": "Jean-François Marmion", "i13": "9786586041583", "i10": "6586041589", "r": 3.0, "p": 320, "dr": "2021/11/15", "da": "2021/11/02", "sh": "read", "pub": "Avis Rara", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "10684280", "t": "11/22/63", "a": "Stephen King", "i13": "9781451627305", "i10": "1451627300", "r": 5.0, "p": 864, "dr": "2021/11/02", "da": "2021/10/12", "sh": "read", "pub": "Scribner", "bd": "ebook", "rv": null, "oy": 2011, "rc": 1}, {"id": "6965986", "t": "A Morte e a morte de Quincas Berro D'Água", "a": "Jorge Amado", "i13": "9788535911831", "i10": "8535911839", "r": 5.0, "p": 120, "dr": "2021/10/12", "da": "2021/10/10", "sh": "read", "pub": "Companhia Das Letras", "bd": "Paperback", "rv": null, "oy": 1959, "rc": 1}, {"id": "42427172", "t": "Mentes geniais (Portuguese Edition)", "a": "Alberto Dell'Isolla", "i13": "9788550302737", "i10": "8550302732", "r": 3.0, "p": 322, "dr": "2018/11/02", "da": "2018/10/29", "sh": "read", "pub": "Universo DOS Livros", "bd": "Paperback", "rv": null, "oy": 2012, "rc": 1}, {"id": "17251984", "t": "À Primeira Vista", "a": "Nicholas Sparks", "i13": "9788580410556", "i10": "858041055X", "r": 2.0, "p": 256, "dr": "2021/09/15", "da": "2021/09/11", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2006, "rc": 1}, {"id": "54912765", "t": "Com Sangue (Holly Gibney, #2)", "a": "Stephen King", "i13": "9788556510976", "i10": "8556510973", "r": 3.0, "p": 400, "dr": "2021/09/11", "da": "2021/08/29", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2020, "rc": 1}, {"id": "39981003", "t": "Neandertal, nosso irmão: Uma breve história do homem (Portuguese Edition)", "a": "Silvana Condemi", "i13": "9788582864500", "i10": "8582864507", "r": 3.0, "p": 245, "dr": "2019/03/10", "da": "2018/12/07", "sh": "read", "pub": "Vestígio Editora", "bd": "Kindle Edition", "rv": null, "oy": 2016, "rc": 1}, {"id": "17185694", "t": "O Advogado", "a": "John Grisham", "i13": null, "i10": "853250891X", "r": 3.0, "p": 352, "dr": "2021/08/29", "da": "2021/08/25", "sh": "read", "pub": "Rocco", "bd": "Paperback", "rv": null, "oy": 1998, "rc": 1}, {"id": "11384516", "t": "Tieta do Agreste", "a": "Jorge Amado", "i13": "9789722017985", "i10": "9722017985", "r": 4.0, "p": 659, "dr": "2021/08/25", "da": "2020/12/16", "sh": "read", "pub": null, "bd": null, "rv": null, "oy": 1977, "rc": 1}, {"id": "57459383", "t": "Depois", "a": "Stephen King", "i13": "9788556511126", "i10": "8556511120", "r": 4.0, "p": 192, "dr": "2021/08/11", "da": "2021/08/09", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "58168878", "t": "Escravidão – Volume 2: Da corrida do ouro em Minas Gerais até a chegada da corte de Dom João ao Brasil", "a": "Laurentino Gomes", "i13": "9786555670394", "i10": "6555670398", "r": 5.0, "p": 512, "dr": "2021/08/04", "da": "2021/07/12", "sh": "read", "pub": "Globo Livros", "bd": "Paperback", "rv": null, "oy": 2021, "rc": 1}, {"id": "17204759", "t": "Pastoral americana (The American Trilogy, #1)", "a": "Philip Roth", "i13": "9788571648524", "i10": "8571648522", "r": 3.0, "p": 480, "dr": "2021/07/12", "da": "2021/06/19", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1997, "rc": 1}, {"id": "28177522", "t": "Os Trabalhadores do Mar", "a": "Victor Hugo", "i13": "9788513010884", "i10": "851301088X", "r": 2.0, "p": 366, "dr": "2019/04/05", "da": "2019/03/27", "sh": "read", "pub": "Nova Cultural", "bd": "Hardcover", "rv": null, "oy": 1866, "rc": 1}, {"id": "57668174", "t": "A queda", "a": "Albert Camus", "i13": "9786555871265", "i10": "6555871261", "r": 2.0, "p": 152, "dr": "2021/06/19", "da": "2021/06/13", "sh": "read", "pub": "Record", "bd": "Hardcover", "rv": null, "oy": 1956, "rc": 1}, {"id": "57668135", "t": "A peste", "a": "Albert Camus", "i13": "9786555871258", "i10": "6555871253", "r": 3.0, "p": 424, "dr": "2021/06/13", "da": "2021/06/03", "sh": "read", "pub": "Record", "bd": "Hardcover", "rv": null, "oy": 1947, "rc": 1}, {"id": "57668040", "t": "O mito de Sísifo", "a": "Albert Camus", "i13": "9786555871241", "i10": "6555871245", "r": 2.0, "p": 224, "dr": "2021/06/03", "da": "2021/05/23", "sh": "read", "pub": "Record", "bd": "Hardcover", "rv": null, "oy": 1942, "rc": 1}, {"id": "57668083", "t": "O estrangeiro", "a": "Albert Camus", "i13": "9786555871234", "i10": "6555871237", "r": 4.0, "p": 176, "dr": "2021/05/23", "da": "2021/05/23", "sh": "read", "pub": "Record", "bd": "Hardcover", "rv": null, "oy": 1942, "rc": 1}, {"id": "57518042", "t": "Séries - O livro: De onde vieram e como são feitas", "a": "Jacqueline Cantore", "i13": "9788547001223", "i10": "8547001220", "r": 3.0, "p": 232, "dr": "2021/05/23", "da": "2021/05/20", "sh": "read", "pub": "Objetiva", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "15828376", "t": "O Casamento (Diário de uma paixão, #2)", "a": "Nicholas Sparks", "i13": "9788580410563", "i10": "8580410568", "r": 3.0, "p": 224, "dr": "2021/05/15", "da": "2021/05/10", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": 2003, "rc": 1}, {"id": "53130459", "t": "A ascensão de Atenas: A história da maior civilização do mundo", "a": "Anthony Everitt", "i13": "9788542217544", "i10": "8542217543", "r": 2.0, "p": 488, "dr": "2021/05/10", "da": "2021/04/14", "sh": "read", "pub": "Crítica", "bd": "Capa dura", "rv": null, "oy": 2016, "rc": 1}, {"id": "36437485", "t": "A Dama das Camélias", "a": "Alexandre Dumas fils", "i13": "9788544000168", "i10": "8544000169", "r": 3.0, "p": 242, "dr": "2021/04/14", "da": "2021/04/10", "sh": "read", "pub": "Martin Claret", "bd": "Paperback", "rv": null, "oy": 1848, "rc": 1}, {"id": "11079750", "t": "O Milagre", "a": "Nicholas Sparks", "i13": "9788520924822", "i10": "8520924824", "r": 3.0, "p": 238, "dr": "2021/04/10", "da": "2021/04/06", "sh": "read", "pub": "Agir", "bd": "Paperback", "rv": null, "oy": 2003, "rc": 1}, {"id": "40127922", "t": "Outsider (Holly Gibney, #1)", "a": "Stephen King", "i13": "9788556510679", "i10": "8556510671", "r": 4.0, "p": 528, "dr": "2021/03/18", "da": "2021/03/13", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2018, "rc": 1}, {"id": "11378197", "t": "Diário de Uma Paixão", "a": "Nicholas Sparks", "i13": "9788563219206", "i10": null, "r": 3.0, "p": 244, "dr": "2021/03/13", "da": "2021/03/13", "sh": "read", "pub": "Novo Conceito", "bd": "Paperback", "rv": null, "oy": 1996, "rc": 1}, {"id": "20453215", "t": "O Nome da Rosa", "a": "Umberto Eco", "i13": "9788577991266", "i10": "8577991261", "r": 3.0, "p": 592, "dr": "2021/03/13", "da": "2021/03/02", "sh": "read", "pub": "BestBolso", "bd": "Paperback", "rv": null, "oy": 1980, "rc": 1}, {"id": "52263222", "t": "Acerto de contas", "a": "John Grisham", "i13": null, "i10": null, "r": 3.0, "p": null, "dr": "2021/03/02", "da": "2021/02/25", "sh": "read", "pub": null, "bd": "Paperback", "rv": "Eu gosto muito dos livros de Grisham, é uma leitura fácil, sem muita enrolação e com histórias realmente boas.\n\nEsse livro acho que deixou um pouco a desejar (frente a seus outros romances). É fácil criticar sendo leitor, pois escrever é uma arte e das mais complexas. Mas mesmos assim vou dar meu ponto de vista.\n\nSPOILERS\n\nO livro é muito triste e bem melancólico. Acaba de uma forma que não nos traz esperança. Foi só desgraça do início ao fim. \n\nTodo capítulo referente ao período da guerra é muito bem descrito e realmente é uma história incrível (ainda mais sabendo que que as batalhes e marchas de Baatan realmente ocorreram), mas para o contexto do livro, desculpe, não acrescenta muita coisa. Não era preciso para reforçar o caráter do personagem, já sabíamos disso na primeira parte do livro. Acho que o autor queria criar uma história em torno dessa parte da guerra, mas acabou sendo desnecessário para o andamento do livro. \n\nNão concordo com alguns comentários que afirmaram que ele foi racista. Era a a forma como as coisas funcionavam naquela época. Ponto.\n\nQuanto às personagens femininas, são todas fracas. Stella é frágil. Florry parece que só leva a vida, sem acrescentar muita coisa. Liza foi fraca e se tornou meio que a vilã, mas espera um pouco, ela teve um caso quando estava até então viúva. Qual foi o erro? \n\nPete no fim das contas foi um inconsequente. Além de um ciúme sem fundamentos (sua mulher achava que ele tinha morrido), não justificava a morte de outra pessoa. E além disso ele matou sem nem ao menos confrontar o pastor. Não critico a decisão do autor nesse ponto, afinal, era isso que ele queria mostrar: como escolhas erradas desencadeiam uma série de outras escolhas e atitudes erradas. \n\nAo final, podíamos esperar uma evolução de seus filhos, mas acho que não evoluíram muito, pelo menos não foi mostrado. Eles se aproximaram como irmão, aprenderam a se virar e sabiam que não podiam mais depender do dinheiro da fazendo do pai, mas não podemos esquecer que herdaram a parte da tia, resumindo: ficaram mais ou menos na mesma.", "oy": 2018, "rc": 1}, {"id": "27877501", "t": "Dolores Claiborne", "a": "Stephen King", "i13": "9781501141188", "i10": "150114118X", "r": 4.0, "p": 400, "dr": "2021/02/25", "da": "2021/02/20", "sh": "read", "pub": "Scribner", "bd": "ebook", "rv": null, "oy": 1992, "rc": 1}, {"id": "3640452", "t": "O Jogador", "a": "Fyodor Dostoevsky", "i13": "9788525409300", "i10": "8525409308", "r": 3.0, "p": 242, "dr": "2017/10/01", "da": "2017/09/02", "sh": "read", "pub": "L&PM", "bd": "Mass Market Paperback", "rv": null, "oy": 1866, "rc": 1}, {"id": "15721212", "t": "Gabriela, cravo e canela", "a": "Jorge Amado", "i13": "9788535920987", "i10": "8535920986", "r": 5.0, "p": 336, "dr": "2021/02/18", "da": "2021/02/08", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 1958, "rc": 1}, {"id": "24563508", "t": "Complô Contra a América", "a": "Philip Roth", "i13": "9788535925432", "i10": "8535925430", "r": 4.0, "p": 440, "dr": "2021/02/08", "da": "2021/01/31", "sh": "read", "pub": "Companhia de Bolso", "bd": "Paperback", "rv": null, "oy": 2004, "rc": 1}, {"id": "21480910", "t": "1789 - A história de Tiradentes, contrabandistas, assassinos e poetas que sonharam a Independência do Brasil", "a": "Pedro Doria", "i13": null, "i10": null, "r": 4.0, "p": 244, "dr": "2021/01/31", "da": "2021/01/30", "sh": "read", "pub": "Nova Fronteira", "bd": "Kindle Edition", "rv": null, "oy": 2014, "rc": 1}, {"id": "51503074", "t": "O Instituto", "a": "Stephen King", "i13": "9788556510853", "i10": "855651085X", "r": 5.0, "p": 544, "dr": "2021/01/30", "da": "2021/01/22", "sh": "read", "pub": "Suma", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "31191248", "t": "O Príncipe", "a": "Niccolò Machiavelli", "i13": "9788532641854", "i10": "8532641857", "r": 3.0, "p": 120, "dr": "2021/01/22", "da": "2021/01/18", "sh": "read", "pub": "Vozes", "bd": "Paperback", "rv": null, "oy": 1513, "rc": 1}, {"id": "13452653", "t": "As Neves do Kilimanjaro e Outros Contos", "a": "Ernest Hemingway", "i13": "9788577992478", "i10": "8577992470", "r": 2.0, "p": 176, "dr": "2021/01/15", "da": "2021/01/12", "sh": "read", "pub": "Bestbolso", "bd": "Paperback", "rv": "Gostei muito de O Velho e o Mar e esperava mais desses contos. O primeiro, que dá título ao livro, é muito bom, mas os outros achei fracos, ou talvez não tenha captado a essência deles, o período histórico,  ou qualquer outra coisa. Acabam do nada e não me passaram nenhuma mensagem.", "oy": 1936, "rc": 1}, {"id": "10959134", "t": "O Velho e o Mar", "a": "Ernest Hemingway", "i13": "9788577992966", "i10": "8577992969", "r": 4.0, "p": 112, "dr": "2021/01/05", "da": "2021/01/03", "sh": "read", "pub": "BestBolso", "bd": "Paperback", "rv": null, "oy": 1952, "rc": 1}, {"id": "41944479", "t": "Vox", "a": "Christina Dalcher", "i13": "9788580418897", "i10": "8580418895", "r": 3.0, "p": 320, "dr": "2021/01/03", "da": "2021/01/01", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": "I don,t know if I missed something, but I thought Olivia had died,  but in the end she appears at the funeral.", "oy": 2018, "rc": 1}, {"id": "26177353", "t": "O Leitor do Trem das 6h27", "a": "Jean-Paul Didierlaurent", "i13": "9788580577914", "i10": "8580577918", "r": 4.0, "p": 176, "dr": "2021/01/01", "da": "2020/12/31", "sh": "read", "pub": "Intrínseca", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "36211877", "t": "Leonardo da Vinci", "a": "Walter Isaacson", "i13": "9788551002575", "i10": "8551002570", "r": 5.0, "p": 640, "dr": "2020/12/31", "da": "2020/12/22", "sh": "read", "pub": "Intrínseca", "bd": "Hardcover", "rv": null, "oy": 2017, "rc": 1}, {"id": "51188232", "t": "O Caso dos Exploradores de Cavernas", "a": "Lon L. Fuller", "i13": "9788520937433", "i10": "8520937438", "r": 3.0, "p": 128, "dr": "2020/12/22", "da": "2020/12/22", "sh": "read", "pub": "Nova Fronteira", "bd": "Paperback", "rv": null, "oy": 1949, "rc": 1}, {"id": "20810413", "t": "Sidarta", "a": "Hermann Hesse", "i13": "9788577994120", "i10": "8577994120", "r": 3.0, "p": 144, "dr": "2020/12/22", "da": "2020/12/20", "sh": "read", "pub": "BestBolso", "bd": "Mass Market Paperback", "rv": null, "oy": 1922, "rc": 1}, {"id": "32811657", "t": "O Tribunal da Quinta-Feira", "a": "Michel Laub", "i13": "9788535928327", "i10": "8535928324", "r": 3.0, "p": 184, "dr": "2020/12/19", "da": "2020/12/15", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 2016, "rc": 1}, {"id": "56134774", "t": "Tem um livro aqui que você vai gostar (Portuguese Edition)", "a": "Antonio Fagundes", "i13": "9786555641028", "i10": "6555641029", "r": 4.0, "p": 255, "dr": "2020/12/17", "da": "2020/12/15", "sh": "read", "pub": "Editora Sextante", "bd": "Kindle Edition", "rv": "Gostei demais do livro do Fagundes. Gosto muito de ler e por conta das dicas do Fagundws, acabei comprando 11 livros agora mesmo...", "oy": null, "rc": 1}, {"id": "28245498", "t": "Os Robôs da Alvorada", "a": "Isaac Asimov", "i13": null, "i10": null, "r": 5.0, "p": 544, "dr": "2020/12/15", "da": "2020/11/21", "sh": "read", "pub": "Aleph", "bd": "Kindle Edition", "rv": null, "oy": 1983, "rc": 1}, {"id": "22116835", "t": "O Sol Desvelado", "a": "Isaac Asimov", "i13": "9788576571667", "i10": "8576571668", "r": 5.0, "p": 288, "dr": "2020/11/21", "da": "2020/11/08", "sh": "read", "pub": "Aleph", "bd": "Paperback", "rv": null, "oy": 1958, "rc": 1}, {"id": "18394644", "t": "As Cavernas de Aço", "a": "Isaac Asimov", "i13": "9788576571506", "i10": "8576571501", "r": 4.0, "p": 304, "dr": "2020/11/08", "da": "2020/10/31", "sh": "read", "pub": "Aleph", "bd": "Paperback", "rv": null, "oy": 1953, "rc": 1}, {"id": "28469095", "t": "Dinheiro: Os Segredos de Quem Tem", "a": "Gustavo Cerbasi", "i13": "9788543103167", "i10": "8543103169", "r": 3.0, "p": 160, "dr": "2020/10/12", "da": "2020/08/18", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": 2005, "rc": 1}, {"id": "43127835", "t": "Por que nós dormimos: a nova ciência do sono e do sonho", "a": "Matthew Walker", "i13": "9788551003657", "i10": "8551003658", "r": 4.0, "p": 400, "dr": "2020/10/12", "da": "2020/09/12", "sh": "read", "pub": "Intrínseca", "bd": "Paperback", "rv": null, "oy": 2017, "rc": 1}, {"id": "35140818", "t": "Camino Island", "a": "John Grisham", "i13": "9781473663725", "i10": "1473663725", "r": 3.0, "p": 290, "dr": "2020/09/12", "da": "2020/09/07", "sh": "read", "pub": "Hachette", "bd": "Hardcover", "rv": null, "oy": 2017, "rc": 1}, {"id": "48560168", "t": "Pequeno Manual Antirracista", "a": "Djamila Ribeiro", "i13": "9788535932874", "i10": "8535932879", "r": 3.0, "p": 136, "dr": "2020/08/23", "da": "2020/08/23", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "33851752", "t": "Empreendedores Inteligentes Enriquecem Mais", "a": "Gustavo Cerbasi", "i13": "9788543104126", "i10": "8543104122", "r": 3.0, "p": 208, "dr": "2020/08/16", "da": "2020/08/08", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": 2016, "rc": 1}, {"id": "2325381", "t": "Bloomberg by Bloomberg", "a": "Michael R. Bloomberg", "i13": "9780471155454", "i10": "0471155454", "r": 4.0, "p": 272, "dr": "2020/07/31", "da": "2020/07/22", "sh": "read", "pub": "Wiley", "bd": "Hardcover", "rv": null, "oy": 1997, "rc": 1}, {"id": "11564", "t": "The Girl Who Loved Tom Gordon", "a": "Stephen King", "i13": "9781416524298", "i10": "1416524290", "r": 4.0, "p": 264, "dr": "2020/07/22", "da": "2020/07/19", "sh": "read", "pub": "Pocket", "bd": "Mass Market Paperback", "rv": null, "oy": 1999, "rc": 1}, {"id": "54569180", "t": "Pedras no Chão", "a": "Márcio Santos", "i13": "9786599088308", "i10": "6599088309", "r": 4.0, "p": 135, "dr": "2020/07/19", "da": "2020/07/17", "sh": "read", "pub": null, "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "48645618", "t": "O Fim da Eternidade", "a": "Isaac Asimov", "i13": "9788576574224", "i10": "8576574225", "r": 4.0, "p": 256, "dr": "2020/07/17", "da": "2020/07/14", "sh": "read", "pub": "Aleph", "bd": "Paperback", "rv": null, "oy": 1955, "rc": 1}, {"id": "12776027", "t": "O Vermelho e o Negro", "a": "Stendhal", "i13": "9788513011201", "i10": "8513011207", "r": 3.0, "p": 510, "dr": "2020/07/14", "da": "2020/06/28", "sh": "read", "pub": "Nova Cultural", "bd": "Hardcover", "rv": null, "oy": 1830, "rc": 1}, {"id": "45063723", "t": "O Teste Da Mãe: Como Conversar Com Clientes E Descobrir Se Sua Ideia � Boa, Mesmo Com Todos Mentindo Para Voc�", "a": "Rob Fitzpatrick", "i13": "9781093693461", "i10": "1093693460", "r": 4.0, "p": 154, "dr": "2020/06/28", "da": "2020/06/20", "sh": "read", "pub": "Independently published", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "53902357", "t": "Curso de Fotografia de Retrato - Fundamentos, técnica e prática", "a": "Mark Jenkinson", "i13": "9788579601460", "i10": "8579601460", "r": 3.0, "p": 224, "dr": "2020/06/20", "da": "2020/06/08", "sh": "read", "pub": "Editora Europa", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "20360161", "t": "As memórias de Sherlock Holmes #2", "a": "Arthur Conan Doyle", "i13": null, "i10": null, "r": 4.0, "p": null, "dr": "2019/04/11", "da": "2019/04/21", "sh": "read", "pub": "Zahar", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "53883548", "t": "Fotografia - Um guia para ser fotógrafo em um mundo onde todos fotografam", "a": "Daniela Agostini", "i13": "9788539627950", "i10": "8539627957", "r": 3.0, "p": 341, "dr": "2020/06/08", "da": "2020/06/07", "sh": "read", "pub": "Senac Editora", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "34098212", "t": "o Advogado Rebelde", "a": "John Grisham", "i13": "9788532530417", "i10": "8532530419", "r": 4.0, "p": 398, "dr": "2020/06/07", "da": "2020/05/31", "sh": "read", "pub": "Rocco", "bd": "Paperback", "rv": null, "oy": 2015, "rc": 1}, {"id": "41188093", "t": "Manifesto do Partido Comunista", "a": "Friedrich Engels", "i13": "9788572839020", "i10": "857283902X", "r": 2.0, "p": 0, "dr": "2020/05/27", "da": "2020/05/25", "sh": "read", "pub": "Edipro", "bd": "Paperback", "rv": "Pode até ser um livro histórico,  mas é um manifestode mais de 150 anos sobre algo que provadamente não funciona e nao é o melhor modelo.", "oy": 1848, "rc": 1}, {"id": "42953575", "t": "Justiça a Qualquer Preço", "a": "John Grisham", "i13": "9788580418910", "i10": "8580418917", "r": 3.0, "p": 336, "dr": "2020/05/31", "da": "2020/05/27", "sh": "read", "pub": "Arqueiro", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "35012103", "t": "It", "a": "Stephen King", "i13": "9781501182099", "i10": "1501182099", "r": 3.0, "p": 1156, "dr": "2020/05/25", "da": "2020/04/05", "sh": "read", "pub": "Scribner", "bd": "Hardcover", "rv": "Desnecessariamente longo. Bom, mas podia ter um terço do tamanho.", "oy": 1986, "rc": 1}, {"id": "41749569", "t": "Design Thinking", "a": "Tim Brown", "i13": "9788550801346", "i10": "8550801348", "r": 3.0, "p": 272, "dr": "2019/06/04", "da": "2019/05/22", "sh": "read", "pub": "Alta Books", "bd": "Paperback", "rv": null, "oy": 2009, "rc": 1}, {"id": "1938164", "t": "Aventuras de Sherlock Holmes", "a": "Arthur Conan Doyle", "i13": "9789684324275", "i10": "9684324278", "r": 4.0, "p": 299, "dr": "2020/02/10", "da": "2019/04/21", "sh": "read", "pub": "Porrua", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "8578390", "t": "Enterrem meu Coração na Curva do Rio", "a": "Dee Brown", "i13": "9788525412935", "i10": "8525412937", "r": 3.0, "p": 390, "dr": "2020/02/24", "da": "2019/11/24", "sh": "read", "pub": "L&PM Editores", "bd": "Paperback", "rv": null, "oy": 1970, "rc": 1}, {"id": "49674723", "t": "Escravidão: Do primeiro leilão de cativos em Portugal até a morte de Zumbi dos Palmares", "a": "Laurentino Gomes", "i13": "9786580634019", "i10": "6580634014", "r": 5.0, "p": 504, "dr": "2020/04/05", "da": "2020/03/28", "sh": "read", "pub": "Globo Livros", "bd": "Paperback", "rv": null, "oy": 2019, "rc": 1}, {"id": "46225105", "t": "Night Shift", "a": "Stephen King", "i13": "9780307743640", "i10": "0307743640", "r": 4.0, "p": 505, "dr": "2020/03/28", "da": "2020/02/24", "sh": "read", "pub": "Anchor Books", "bd": "Mass Market Paperback", "rv": null, "oy": 1978, "rc": 1}, {"id": "50822541", "t": "Value Proposition Design: Como Construir Propostas de Valor Inovadoras", "a": "Alexander Osterwalder", "i13": "9788550807256", "i10": "8550807257", "r": 4.0, "p": 0, "dr": "2019/11/24", "da": "2019/11/07", "sh": "read", "pub": "Editora Alta Books", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "10082170", "t": "Digital Photography Essentials: A Practical and Inspiring Guide That Will Take You from Beginner to Confident, C", "a": "Tom Ang", "i13": "9780756682149", "i10": "0756682142", "r": 3.0, "p": 360, "dr": "2019/11/24", "da": "2019/07/01", "sh": "read", "pub": "DK", "bd": "Hardcover", "rv": null, "oy": 2011, "rc": 1}, {"id": "35714295", "t": "A história da ciência para quem tem pressa: De Galileu a Stephen Hawking em 200 páginas! (Série Para quem Tem Pressa) (Portuguese Edition)", "a": "Nicola Chalton", "i13": "9788558890489", "i10": "855889048X", "r": 4.0, "p": 202, "dr": "2019/11/07", "da": "2019/10/17", "sh": "read", "pub": "Editora Valentina", "bd": "Kindle Edition", "rv": null, "oy": null, "rc": 2}, {"id": "17912916", "t": "Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking", "a": "Foster Provost", "i13": "9781449361327", "i10": "1449361323", "r": 3.0, "p": 413, "dr": "2019/10/18", "da": "2019/09/26", "sh": "read", "pub": "O'Reilly Media", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "21545330", "t": "Contágio: Por que as coisas pegam", "a": "Jonah Berger", "i13": "9788580449945", "i10": "8580449944", "r": 4.0, "p": 224, "dr": "2019/10/16", "da": "2019/03/15", "sh": "read", "pub": "LeYa Brasil", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "26183482", "t": "The Top 85 Mistakes Brazilians Make In English", "a": "Andrew Creelman", "i13": null, "i10": null, "r": 3.0, "p": 101, "dr": "2019/09/28", "da": "2019/09/09", "sh": "read", "pub": null, "bd": "Kindle Edition", "rv": null, "oy": 2015, "rc": 1}, {"id": "2858683", "t": "Memorial do convento", "a": "José Saramago", "i13": "9788528600223", "i10": "852860022X", "r": 3.0, "p": 353, "dr": "2019/09/25", "da": "2018/01/14", "sh": "read", "pub": "Bertrand Brasil", "bd": "Paperback", "rv": null, "oy": 1982, "rc": 1}, {"id": "34200382", "t": "Mindset: A Nova Psicologia do Sucesso", "a": "Carol S. Dweck", "i13": "9788547000240", "i10": "8547000240", "r": 4.0, "p": 312, "dr": "2019/08/25", "da": "2018/12/07", "sh": "read", "pub": "Objetiva", "bd": "Paperback", "rv": null, "oy": 2006, "rc": 1}, {"id": "43697251", "t": "Histórias de Sherlock Holmes", "a": "Arthur Conan Doyle", "i13": "9789722534079", "i10": "9722534076", "r": 4.0, "p": 320, "dr": "2019/08/09", "da": "2019/07/26", "sh": "read", "pub": "11 X 17", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "44579714", "t": "A Volta De Sherlock Holmes", "a": "Arthur Conan Doyle", "i13": "9788506066782", "i10": "8506066786", "r": 4.0, "p": null, "dr": "2019/04/26", "da": "2019/04/26", "sh": "read", "pub": "Melhoramentos", "bd": "Paperback", "rv": null, "oy": 1904, "rc": 1}, {"id": "6726816", "t": "O Signo dos Quatro", "a": "Arthur Conan Doyle", "i13": "9789895545667", "i10": "9895545665", "r": 4.0, "p": 119, "dr": "2019/02/15", "da": "2019/04/21", "sh": "read", "pub": "Global Notícias", "bd": "Mass Market Paperback", "rv": null, "oy": 1890, "rc": 1}, {"id": "42794411", "t": "Um estudo em vermelho (Sherlock Holmes Livro 1) (Portuguese Edition)", "a": "Arthur Conan Doyle", "i13": "9788506071229", "i10": "8506071224", "r": 4.0, "p": 132, "dr": "2019/02/11", "da": "2019/04/21", "sh": "read", "pub": "Editora Melhoramentos", "bd": "Kindle Edition", "rv": null, "oy": 1887, "rc": 1}, {"id": "6976799", "t": "Os Últimos Casos de Sherlock Holmes", "a": "Arthur Conan Doyle", "i13": "9789721027862", "i10": "9721027863", "r": 4.0, "p": 193, "dr": "2019/08/06", "da": "2019/07/26", "sh": "read", "pub": "Publicações Europa-América", "bd": "Paperback", "rv": null, "oy": 1927, "rc": 1}, {"id": "29093923", "t": "O vale do medo (Sherlock Holmes, #7)", "a": "Arthur Conan Doyle", "i13": "9788537815045", "i10": "8537815047", "r": 3.0, "p": 252, "dr": "2019/08/02", "da": "2019/07/26", "sh": "read", "pub": "Clássicos Zahar", "bd": "Kindle Edition", "rv": null, "oy": 1914, "rc": 1}, {"id": "8086552", "t": "Kanban: Successful Evolutionary Change for Your Technology Business", "a": "David J. Anderson", "i13": "9780984521401", "i10": "0984521402", "r": 3.0, "p": 262, "dr": "2019/07/26", "da": "2019/07/19", "sh": "read", "pub": "Blue Hole Press", "bd": "Paperback", "rv": null, "oy": 2010, "rc": 1}, {"id": "36602045", "t": "The Flash Book: How to fall hopelessly in love with your flash, and finally start taking the type of images you bought it for in the first place (The Photography Book Book 6)", "a": "Scott Kelby", "i13": null, "i10": null, "r": 3.0, "p": 211, "dr": "2019/07/22", "da": "2019/07/09", "sh": "read", "pub": "Rocky Nook", "bd": "Kindle Edition", "rv": null, "oy": null, "rc": 1}, {"id": "60843", "t": "From a Buick 8", "a": "Stephen King", "i13": "9780743417686", "i10": "0743417682", "r": 2.0, "p": 487, "dr": "2019/07/17", "da": "2018/10/09", "sh": "read", "pub": "Pocket Books", "bd": "Paperback", "rv": null, "oy": 2002, "rc": 1}, {"id": "22512931", "t": "Building Microservices: Designing Fine-Grained Systems", "a": "Sam Newman", "i13": "9781491950357", "i10": "1491950358", "r": 3.0, "p": 473, "dr": "2019/07/05", "da": "2019/06/17", "sh": "read", "pub": "O'Reilly Media", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "43521032", "t": "O Cão dos Baskerville", "a": "Arthur Conan Doyle", "i13": null, "i10": null, "r": 4.0, "p": 149, "dr": "2019/05/24", "da": "2019/04/26", "sh": "read", "pub": null, "bd": "Kindle Edition", "rv": null, "oy": 1902, "rc": 1}, {"id": "34621011", "t": "Migrating to Microservice Databases", "a": "Edson Yanaga", "i13": "9781491974612", "i10": "1491974613", "r": 3.0, "p": 72, "dr": "2019/06/17", "da": "2019/06/16", "sh": "read", "pub": "O'reilly", "bd": "ebook", "rv": null, "oy": null, "rc": 1}, {"id": "36250841", "t": "Transformação digital: Repensando o seu negócio para a era digital", "a": "David L. Rogers", "i13": "9788551302736", "i10": "8551302736", "r": 4.0, "p": 440, "dr": "2019/06/16", "da": "2019/06/03", "sh": "read", "pub": "Autêntica Business", "bd": "Kindle Edition", "rv": null, "oy": 2016, "rc": 1}, {"id": "22047048", "t": "Pet Sematary", "a": "Stephen King", "i13": null, "i10": null, "r": 3.0, "p": 561, "dr": "2019/01/05", "da": "2018/11/25", "sh": "read", "pub": "Scribner", "bd": "ebook", "rv": null, "oy": 1983, "rc": 1}, {"id": "34069833", "t": "The Whistler: A Novel", "a": "John Grisham", "i13": null, "i10": null, "r": 3.0, "p": 424, "dr": "2019/03/06", "da": "2018/10/09", "sh": "read", "pub": "Vintage", "bd": "Mass Market Paperback", "rv": null, "oy": 2016, "rc": 1}, {"id": "503534", "t": "Way of the Turtle: The Secret Methods That Turned Ordinary People Into Legendary Traders", "a": "Curtis Faith", "i13": "9780071486644", "i10": "007148664X", "r": 2.0, "p": 288, "dr": "2019/03/15", "da": "2019/02/24", "sh": "read", "pub": "McGraw-Hill", "bd": "Hardcover", "rv": null, "oy": 2007, "rc": 1}, {"id": "22854378", "t": "Adeus, Aposentadoria: Como Garantir Seu Futuro Sem Depender dos Outros", "a": "Gustavo Cerbasi", "i13": "9788543100975", "i10": "8543100976", "r": 2.0, "p": 160, "dr": "2019/03/27", "da": "2019/03/26", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "9917996", "t": "'Salem's Lot", "a": "Stephen King", "i13": null, "i10": null, "r": 3.0, "p": 653, "dr": "2019/03/26", "da": "2019/03/18", "sh": "read", "pub": "Anchor", "bd": "Mass Market Paperback", "rv": null, "oy": 1975, "rc": 1}, {"id": "43362462", "t": "Um mundo que mudou", "a": "Danielle Steel", "i13": null, "i10": null, "r": 3.0, "p": 349, "dr": "2019/03/18", "da": "2019/03/15", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 1983, "rc": 1}, {"id": "30191598", "t": "O lado difícil das situações difíceis: Como construir um negócio quando não existem respostas prontas (Portuguese Edition)", "a": "Ben Horowitz", "i13": "9788546900008", "i10": "8546900000", "r": 3.0, "p": 368, "dr": "2019/03/03", "da": "2018/10/17", "sh": "read", "pub": "WMF Martins Fontes", "bd": "Kindle Edition", "rv": null, "oy": 2014, "rc": 1}, {"id": "713273", "t": "Os Segredos Da Mente Milionária", "a": "T Harv Eker", "i13": "9788575422397", "i10": "8575422391", "r": 2.0, "p": 176, "dr": "2019/02/23", "da": "2019/02/19", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "23352551", "t": "Lean Change Management: Innovative Practices for Managing Organizational Changes", "a": "Jason Little", "i13": "9780990466505", "i10": "0990466507", "r": 2.0, "p": 180, "dr": "2019/02/07", "da": "2019/02/06", "sh": "read", "pub": "Happy Melly Express", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "35289523", "t": "Mauricio: A História que não Está no Gibi", "a": "Mauricio de Sousa", "i13": "9788568377147", "i10": "8568377149", "r": 4.0, "p": 336, "dr": "2019/02/07", "da": "2019/02/03", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "58828", "t": "Big Stone Gap (Big Stone Gap, #1)", "a": "adriana-trigiani", "i13": "9780743440127", "i10": "0743440129", "r": 3.0, "p": 400, "dr": "2019/02/03", "da": "2018/10/09", "sh": "read", "pub": "Pocket Books", "bd": "Paperback", "rv": null, "oy": 2000, "rc": 1}, {"id": "17569857", "t": "A Segunda Vitória", "a": "Morris L. West", "i13": null, "i10": null, "r": 3.0, "p": 271, "dr": "2019/01/26", "da": "2018/01/14", "sh": "read", "pub": "Círculo do Livro", "bd": "Hardcover", "rv": null, "oy": 1958, "rc": 1}, {"id": "31344317", "t": "Por Que Fazemos O Que Fazemos?: Aflições Vitais Sobre Trabalho, Carreira e Realização", "a": "Mario Sergio Cortella", "i13": "9788542207415", "i10": "8542207416", "r": 4.0, "p": 174, "dr": "2019/01/21", "da": "2019/01/12", "sh": "read", "pub": "Planeta", "bd": "Paperback", "rv": null, "oy": 2016, "rc": 1}, {"id": "41714475", "t": "21 Lições Para o Século 21", "a": "Yuval Noah Harari", "i13": null, "i10": null, "r": 3.0, "p": 357, "dr": "2019/01/15", "da": "2018/12/04", "sh": "read", "pub": "Companhia das Letras", "bd": "Kindle Edition", "rv": null, "oy": 2018, "rc": 1}, {"id": "40612207", "t": "Aprenda a investir em ações e a operar na bolsa via internet", "a": "Carlos A H Brum", "i13": null, "i10": null, "r": 2.0, "p": 185, "dr": "2019/01/06", "da": "2018/12/25", "sh": "read", "pub": "Editora Ciência Moderna", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "38115075", "t": "PMO Ágil: Escritório Ágil de Gerenciamento de Projetos (Portuguese Edition)", "a": "Fabio Cruz", "i13": "9788574527918", "i10": "8574527912", "r": 3.0, "p": 639, "dr": "2018/12/30", "da": "2018/12/07", "sh": "read", "pub": "BRASPORT", "bd": "Kindle Edition", "rv": null, "oy": null, "rc": 1}, {"id": "32171868", "t": "Caleidoscópio", "a": "Danielle Steel", "i13": "9788501034458", "i10": "8501034452", "r": 4.0, "p": 334, "dr": "2018/12/26", "da": "2018/05/21", "sh": "read", "pub": "Record", "bd": "Paperback", "rv": null, "oy": 1987, "rc": 1}, {"id": "191412", "t": "A History of the Twentieth Century: The Concise Edition of the Acclaimed World History – A Vivid Year-by-Year Record of Wars and Technology from Aviation to Computers", "a": "Martin Gilbert", "i13": "9780060505943", "i10": "006050594X", "r": 3.0, "p": 832, "dr": "2018/12/24", "da": "2018/03/06", "sh": "read", "pub": "William Morrow Paperbacks", "bd": "Paperback", "rv": "Vamos começar com um erro absurdo que o livro comete: ele afirma que o ano de 1999 foi o último do século XX, sendo que na verdade foi o ano 2000. \n\nO livro deveria se chamar A história GEOPOLÍTICA do século XX, pois 99% do livro só trata desse tema.\n\nPassou muito pouco pelos avanços da tecnologia, grandes invenções, esportes (Copa do Mundo não é mencionada), grandes nomes, tráfico de drogas, dentre outras coisas. \n\nLivro cansativo, longo e ao mesmo tempo superficial. \n\n", "oy": 1989, "rc": 1}, {"id": "18517990", "t": "Um Pedido às Estrelas", "a": "Priscille Sibley", "i13": "9788582400586", "i10": "8582400586", "r": 3.0, "p": 320, "dr": "2018/11/24", "da": "2018/08/12", "sh": "read", "pub": "Benvirá", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "37941030", "t": "Armas, Germes e Aço: Os Destinos das Sociedades Humanas", "a": "Jared Diamond", "i13": "9788501110015", "i10": "8501110019", "r": 3.0, "p": 476, "dr": "2018/11/20", "da": "2018/11/14", "sh": "read", "pub": "Editora Record", "bd": "Paperback", "rv": "O tema do livro é extremamente interessante e no começo o autor conduz de uma forma muito boa. Achei bem legal a ideia de formular as perguntar e depois desenvolver bem a resposta. O problema é que do meio em diante tive a impressão que ele se repete com as explicações, sempre mencionando as mesmas coisas e acaba caindo em muitos detalhes, o que torna a leitura cansativa e acabamos dispensando.\n\nMas mesmo assim creio que não deva impedir ninguém de ler o livro, pois realmente o tema é muito bom.", "oy": 1997, "rc": 1}, {"id": "38663285", "t": "Estrada Aberta", "a": "Sávio Brayner", "i13": "9789895174508", "i10": "9895174500", "r": 3.0, "p": 402, "dr": "2018/11/14", "da": "2018/10/09", "sh": "read", "pub": "Chiado Editora", "bd": "Paperback", "rv": null, "oy": null, "rc": 1}, {"id": "11017574", "t": "The Runaway Jury", "a": "John Grisham", "i13": null, "i10": null, "r": 4.0, "p": 550, "dr": "2018/11/11", "da": "2017/10/31", "sh": "read", "pub": "Vintage", "bd": "Mass Market Paperback", "rv": null, "oy": 1996, "rc": 1}, {"id": "10160130", "t": "Carrie", "a": "Stephen King", "i13": "9780307743664", "i10": "0307743667", "r": 4.0, "p": 290, "dr": "2018/10/30", "da": "2018/10/09", "sh": "read", "pub": "Vintage", "bd": "Mass Market Paperback", "rv": null, "oy": 1974, "rc": 1}, {"id": "11705132", "t": "Contato", "a": "Carl Sagan", "i13": "9788535913514", "i10": "8535913513", "r": 4.0, "p": 440, "dr": "2018/10/23", "da": "2018/10/09", "sh": "read", "pub": "Companhia de Bolso", "bd": "Paperback", "rv": null, "oy": 1985, "rc": 1}, {"id": "23295849", "t": "DevOps for Dummies", "a": "Sanjeev Sharma", "i13": "9781118734704", "i10": "111873470X", "r": 3.0, "p": 40, "dr": "2018/10/14", "da": "2018/10/08", "sh": "read", "pub": "John Wiley & Sons", "bd": "Paperback", "rv": null, "oy": 2014, "rc": 1}, {"id": "16144853", "t": "Leaders Eat Last: Why Some Teams Pull Together and Others Don't", "a": "Simon Sinek", "i13": "9781591845324", "i10": "1591845327", "r": 4.0, "p": 350, "dr": "2018/10/13", "da": "2018/04/10", "sh": "read", "pub": "Portfolio", "bd": "Hardcover", "rv": null, "oy": 2014, "rc": 1}, {"id": "15736270", "t": "Questões do coração", "a": "Emily Giffin", "i13": "9788563219312", "i10": "8563219316", "r": 3.0, "p": 438, "dr": "2018/10/04", "da": "2018/08/12", "sh": "read", "pub": "Novo Conceito", "bd": "Paperback", "rv": null, "oy": 2010, "rc": 1}, {"id": "34830449", "t": "O Enigma do Tempo: A revolução iniciada por Einstein", "a": "Paul C.W. Davies", "i13": null, "i10": "8500330503", "r": 3.0, "p": 411, "dr": "2018/09/28", "da": "2017/12/15", "sh": "read", "pub": "Ediouro", "bd": "Paperback", "rv": null, "oy": 1995, "rc": 1}, {"id": "20360659", "t": "Ansiedade - Como Enfrentar o Mal do Século", "a": "Augusto Cury", "i13": "9788502218482", "i10": "8502218484", "r": 3.0, "p": 160, "dr": "2018/09/18", "da": "2018/09/16", "sh": "read", "pub": "Saraiva", "bd": "Paperback", "rv": null, "oy": 2013, "rc": 1}, {"id": "16149396", "t": "Um Homem de Sorte", "a": "Nicholas Sparks", "i13": null, "i10": null, "r": 3.0, "p": 349, "dr": "2018/09/16", "da": "2018/08/12", "sh": "read", "pub": "Editora Novo Conceito", "bd": "Paperback", "rv": null, "oy": 2008, "rc": 1}, {"id": "11096656", "t": "A Painted House", "a": "John Grisham", "i13": "9780345532046", "i10": "034553204X", "r": 4.0, "p": 465, "dr": "2018/09/09", "da": "2017/10/29", "sh": "read", "pub": "Vintage", "bd": "Mass Market Paperback", "rv": null, "oy": 2001, "rc": 1}, {"id": "17285545", "t": "Noites de Tormenta", "a": "Nicholas Sparks", "i13": "9788599560518", "i10": "8599560514", "r": 3.0, "p": 173, "dr": "2018/08/16", "da": "2018/08/12", "sh": "read", "pub": "Novo Conceito", "bd": "Paperback", "rv": "Particularmente não sou muito fã dessas histórias mais \"açucaradas\", mas gostei do livro. \n\nLeitura leve e rápida. História bonita e atual. O livro tenta deixar uma mensagem bonita e alto astral ao final, mas mesmo assim é uma história triste.\n\nO final é bem previsível, mas não tira méritos do livro por conta disso.", "oy": 2002, "rc": 1}, {"id": "15757314", "t": "A Última Esperança", "a": "Frank G. Slaughter", "i13": null, "i10": null, "r": 3.0, "p": 330, "dr": "2018/08/14", "da": "2018/01/14", "sh": "read", "pub": "Abril Cultural (Best Sellers)", "bd": "Mass Market Paperback", "rv": "O livro me prendeu a atenção. Gostei da história. É um pouco estranho hoje lermos algo sobre lobotomia, mas eu sempre tinha que me atentar que o livro foi escrito em 58 e naquela ocasião fazia todo o sentido esse tópico.\n\nAchei meio forçado a recuperação dos pacientes, muito rápido o mágico. Mas como não sou médico e estamos falando de uma obra de ficção, ok, é valido.\n\n", "oy": 1958, "rc": 1}, {"id": "13063920", "t": "O Leopardo", "a": "Giuseppe Tomasi di Lampedusa", "i13": null, "i10": null, "r": 3.0, "p": 320, "dr": "2018/08/04", "da": "2018/07/30", "sh": "read", "pub": "Nova Cultural", "bd": "Hardcover", "rv": "Gostei e não gostei. Fiquei com a impressão de que o livro não se decide exatamente sobre qual história que contar. Me parece que não existe um personagem principal. Inicialmente pensei que seria o chefe da família, mas depois já me parecia que era o sobrinho dele.\n\nSenti falta de um clímax também ou um desfecho mais impactante.\n\nTem uma parte que conta uma viagem do padre, mas é uma história perdida no meio do livro, não se liga a nada. \n\nDe qualquer forma, não é um livro ruim", "oy": 1958, "rc": 1}, {"id": "18751015", "t": "O Morro dos Ventos Uivantes", "a": "Emily Brontë", "i13": "9788513011232", "i10": "8513011231", "r": 4.0, "p": 286, "dr": "2017/08/04", "da": "2017/07/29", "sh": "read", "pub": "Nova Cultural", "bd": "Hardcover", "rv": null, "oy": 1847, "rc": 1}, {"id": "18050882", "t": "Lolita", "a": "Vladimir Nabokov", "i13": null, "i10": null, "r": 3.0, "p": 319, "dr": "2018/07/30", "da": "2018/05/21", "sh": "read", "pub": "O Globo", "bd": "Hardcover", "rv": "Cansativo. Achei muito longo, muita divagação, escapadas da linha central da história e detalhes inúteis. \n\nApesar de ser um tema chocante (se hoje é, imagine na época em que foi escrito) o autor tomou cuidado para ser escatológico, ainda bem. \n\nDei 3 estrelas, pois apesar de tudo,  a histórica não é ruim.", "oy": 1955, "rc": 1}, {"id": "13541895", "t": "Para Minhas Filhas", "a": "Barbara Delinsky", "i13": "9788528605709", "i10": "8528605701", "r": 3.0, "p": 415, "dr": "2018/07/24", "da": "2018/05/21", "sh": "read", "pub": "Bertrand Brasil", "bd": "Hardcover", "rv": "Livro mais voltado para o público feminino. Acabei lendo pois estava aqui em casa e precisava de uma história mais leve depois de ter lido um livro sobre Aucshwitz.\n\nNão é um livro ruim, mas tem um final bem previsível, ou seja, sem grandes reviravoltas.", "oy": 1995, "rc": 1}, {"id": "18915109", "t": "Auschwitz", "a": "Laurence Rees", "i13": null, "i10": null, "r": 4.0, "p": 418, "dr": "2018/07/20", "da": "2018/06/07", "sh": "read", "pub": "BBC Digital", "bd": "Kindle Edition", "rv": "Muitas pessoas acreditam que o Holocausto não ocorreu. É até possível entender, pois foi algo tão surreal que as vezes parece inacreditável que efetivamente aconteceu. Com esse livro podemos ter uma ideia de como foi. \n\nO autor conta a história do campo de concentração desde a concepção até o fechamento. Navega um pouco pelos outros campos nazistas e também pela própria guerra, mas ao mesmo tempo descreve relatos de sobreviventes: prisioneiros e soldados. \n\nSenti um pouco de falta de mais relatos e um pouco mais de aprofundamento nos experimentos do Dr. Mengele, mas mesmo assim não desabona o livro.\n\nNão é um livro fácil de se ler, pois tudo é muito cruel e difícil de assimilar.", "oy": 2005, "rc": 1}, {"id": "31452899", "t": "O adversário secreto", "a": "Agatha Christie", "i13": "9788525057723", "i10": "852505772X", "r": 4.0, "p": 320, "dr": "2018/07/02", "da": "2018/05/27", "sh": "read", "pub": "Globo Livros", "bd": "Kindle Edition", "rv": "Já li quase 50 livros da Agatha Christie, pelo menos ha 30 anos e somente agora descobri que ela tinha histórias com uma dupla de aventureiros. Gostei bastante do livro, achei dinâmico, rápido, divertido e muito inteligente. \n\nO ritmo me lembrou os livros de Dan Brown, ou melhor, ele se inspirou nos livros da escritora inglesa...rs\n\n", "oy": 1922, "rc": 1}, {"id": "10589", "t": "Bag of Bones", "a": "Stephen King", "i13": "9780671024239", "i10": "067102423X", "r": 3.0, "p": 736, "dr": "2018/06/29", "da": "2018/04/15", "sh": "read", "pub": "Simon & Schuster Inc", "bd": "Paperback", "rv": "Sou fã dos livros de Stephen King, ele tem uma capacidade incrível de criar os personagens e prender nossa atenção mesmo que na maioria das vezes quase nada está acontecendo. Mas dessa vez acho que errou um pouco a mão.\n\nO livro não é ruim. A história é boa, mas é muito longo. Acho que com metade das páginas dava para ter contado tudo, sem perder nada. Os capítulos dos sonhos foram bem cansativos.\n\n", "oy": 1998, "rc": 1}, {"id": "36286556", "t": "Stephen King - Coração Assombrado - A Biografia", "a": "Lisa Rogak", "i13": "9788594540393", "i10": "8594540396", "r": 5.0, "p": 320, "dr": "2018/06/14", "da": "2017/12/23", "sh": "read", "pub": "DarkSide Books", "bd": "Hardcover", "rv": "Sempre gostei dos filmes baseados nos livros de Stephen King e ultimamente estou dando bastante atenção a seus livros. \n\nEle realmente é um cara fora da curva. Consegue imaginar histórias incríveis a partir de acontecimentos banais de seu próprio cotidiano. Em alguns de seus livros praticamente não acontece nada, mas prende a atenção do início ao fim.\n\nO trabalho da Lisa Rogak nessa biografia foi bem legal, pois podemos conhecer um pouco da mente do Stephen e também entender de onde vem as ideias para os livros. \n\nAchei o último capítulo um pouco fora do padrão geral do livro. Acho que foi feito meio às pressas, mas isso não tira a qualidade da obra.", "oy": 2009, "rc": 1}, {"id": "6336093", "t": "A Cidade do Sol", "a": "Khaled Hosseini", "i13": "9788520920107", "i10": "8520920101", "r": 4.0, "p": 368, "dr": "2018/06/10", "da": "2017/10/31", "sh": "read", "pub": "Nova Fronteira", "bd": "Paperback", "rv": "É muito interessante a forma como o ator constrói uma história de duas mulheres ligadas e impactadas pelos acontecimentos das últimas décadas no Afeganistão.\n\nInicialmente parecia que a história giraria em torno da Miriam e que ela seria a principal personagem, mas não, no meio do livro que nos damos conta que a vida para ela já não teria mais volta e o papel dela seria somente ajudar a outra personagem, Laila.\n\nO autor criou duas personagens fortes e de muito caráter. O livro é triste e angustiante, mas ao final, assim como Laila, nós leitores somos poupados de tanto sofrimento e finalmente podemos respirar.", "oy": 2007, "rc": 1}, {"id": "23678274", "t": "Tocando o Vazio - A história real da miraculosa sobrevivência de um homem", "a": "Joe Simpson", "i13": "9788535905533", "i10": "8535905533", "r": 4.0, "p": 228, "dr": "2018/06/08", "da": "2018/05/21", "sh": "read", "pub": "Companhia das Letras", "bd": "Paperback", "rv": "Para mim o livro se divide em três partes:\n\nNa primeira, uma enxurrada de termos técnicos de montanhismo, o que o torna um pouco cansativo.\n\nNa segunda parte, começa toda a ambientação para o acidente e os momentos angustiantes quando os alpinistas se separam.\n\nA terceira parte é eletrizante e fez com que eu mudasse minha nota de 3 estrelas para 4. Sabemos o final, mas a narrativa nos deixa apreensivos e me peguei torcendo para ele ser logo encontrado, como se houvesse uma chance de não dar certo.\n\nRealmente é uma história incrível de luta e sobrevivência.", "oy": 1988, "rc": 1}, {"id": "18172387", "t": "Guia Politicamente Incorreto da História do Mundo", "a": "Leandro Narloch", "i13": "9788580448405", "i10": "8580448409", "r": 3.0, "p": 352, "dr": "2018/06/02", "da": "2018/05/27", "sh": "read", "pub": "LeYa Brasil", "bd": "Paperback", "rv": "É difícil dizer o quão correta é essa linha de raciocínio do autor. As evidências são mostradas de uma forma que até convencem, mas temos sempre que tomar cuidado, pois no papel tudo fica bonito.\n\nDe qualquer forma, ele propõe versões diferentes para partes da história teoricamente já consolidadas, o que é algo bom, pois é rico termos sempre mais de um ponto de vista.\n\nSe tudo é verdade ou não eu não sei, mas que foi uma leitura divertida, isso foi.", "oy": 2013, "rc": 1}, {"id": "7194181", "t": "O Misterioso Caso de Styles (Hercule Poirot, #1)", "a": "Agatha Christie", "i13": "9789724130491", "i10": "9724130495", "r": 4.0, "p": 192, "dr": "2018/06/03", "da": "2018/05/27", "sh": "read", "pub": "Edições ASA", "bd": "Paperback", "rv": "Realmente lançar uma carreira como escritora com um livro dessa qualidade é raro. Após ler mais de 40 livros da Agatha Christie, acabei lendo o primeiro dela somente agora, 30 anos depois de ter tido contato com os livros dela. É uma história, como sempre, bem amarrada e que deixa as explicações e ligações somente para o final.\n\nAchei uma certa semelhança com Os cinco porquinhos.", "oy": 1920, "rc": 1}, {"id": "6709963", "t": "O Processo", "a": "Franz Kafka", "i13": "9789896600099", "i10": "9896600090", "r": 1.0, "p": 266, "dr": "2018/05/31", "da": "2018/05/27", "sh": "read", "pub": "Leya", "bd": "Mass Market Paperback", "rv": "Só tenho uma coisa a dizer: livro muito, mas muito chato. Foi um tormento a sua leitura.", "oy": 1925, "rc": 1}, {"id": "37853613", "t": "1348 - A Peste Negra (Portuguese Edition)", "a": "José Martino", "i13": null, "i10": null, "r": 4.0, "p": 109, "dr": "2018/05/27", "da": "2018/05/21", "sh": "read", "pub": null, "bd": "Kindle Edition", "rv": "Este livro me surpreendeu. Não esperava muito dele, mas achei bem escrito, rico em detalhes, informativo e principalmente, interessante.\n\nParabéns ao autor.", "oy": null, "rc": 1}, {"id": "20717571", "t": "Joyland", "a": "Stephen King", "i13": null, "i10": null, "r": 4.0, "p": 224, "dr": "2018/05/26", "da": "2018/05/19", "sh": "read", "pub": "Titan Books", "bd": "Kindle Edition", "rv": "É impressionante como King consegue prender nossa atenção em um livro que praticamente não tem ação alguma. Isso se deve a forma como ele escreve, personagens bem construídos e ambientação lenta mas gradual para o grande final.\n\nEle tira o melhor de uma história simples.", "oy": 2013, "rc": 1}, {"id": "18219400", "t": "Governança de TI: Como as empresas com melhor desempenho administram os direitos decisórios de TI na busca por resultados superiores", "a": "Peter Weill", "i13": "9788589384780", "i10": "8589384780", "r": 2.0, "p": 290, "dr": "2018/05/19", "da": "2018/04/10", "sh": "read", "pub": "Makron Books", "bd": "Paperback", "rv": "Infelizmente não gostei. Livro maçante, repetitivo, sem dinamismo e chato. Os estudos de casos são as melhores partes. Esperava algo completamente diferente", "oy": 2004, "rc": 1}, {"id": "24978376", "t": "Como era Verde o Meu Vale", "a": "Richard Llewellyn", "i13": null, "i10": null, "r": 5.0, "p": null, "dr": "2018/05/13", "da": "2017/12/28", "sh": "read", "pub": "Círculo do Livro", "bd": "Hardcover", "rv": "Que livro bom, incrível. Historia simples, contada do ponto de vista de um menino de família mineira. Os detalhes do lugar, as receitas das comidas, suas angústias, alegrias e tristezas. São contadas de uma forma que é como se estivéssemos ali, ao lado dele.\n\nNo geral o livro sempre passa uma mensagem de alegria, mas ao final me pareceu melancólico e triste, mas nada que diminua sua qualidade, muito pelo contrário, pois a ideia, conforme o próprio titulo sugere, era mostrar as lembranças boas do passado e que hoje tudo é diferente e deixou de ser verde, como o vale.", "oy": 1939, "rc": 1}, {"id": "36330367", "t": "Sobre a morte e o morrer: O que os doentes terminais têm para ensinar a médicos, enfermeiras, relogiosos e aos seus próprios parentes (Portuguese Edition)", "a": "Elisabeth Kübler-Ross", "i13": "9788546901210", "i10": "854690121X", "r": 4.0, "p": 340, "dr": "2018/05/03", "da": "2018/01/23", "sh": "read", "pub": "WMF Martins Fontes", "bd": "Kindle Edition", "rv": "Gostei bastante do tema e do livro. As entrevistas reais transcritas são muito humanas e por vezes tocantes.\n\nA autora fez um grande trabalho. Percebi que as entrevistas foram feitas na década de 60. Fiquei curioso para saber como seriam se fossem feitas agora, quase 60 anos depois.", "oy": 1969, "rc": 1}, {"id": "24806485", "t": "Os cinco porquinhos (Hercule Poirot, #25)", "a": "Agatha Christie", "i13": "9788525057648", "i10": "8525057649", "r": 4.0, "p": 253, "dr": "2018/04/29", "da": "2018/04/27", "sh": "read", "pub": "Globo Livros", "bd": "Kindle Edition", "rv": "Por um momento achei que tinha descoberto o assassino, mas errei, como sempre... rs\n\nSegue o padrão dos livros da famosa escritora. Não é dos melhores, mas sem dúvida muito bom, como “quase” todos.", "oy": 1942, "rc": 1}, {"id": "31208652", "t": "End of Watch (Bill Hodges Trilogy, #3)", "a": "Stephen King", "i13": "9781501134135", "i10": "1501134132", "r": 3.0, "p": 482, "dr": "2018/04/27", "da": "2018/02/15", "sh": "read", "pub": "Pocket Books", "bd": "Mass Market Paperback", "rv": "Da trilogia, foi o que eu menos gostei, mas é um bom livro. Achei que os outros dois foram mais eletrizantes, principalmente no final. A história fechou sem deixar brechas ou duvidas, o que é bom.\n\nEssa ultima parte foge do tom dos outros livros, pois aqui entra um pouco a parte sobrenatural que King tanto gosta.\n\nTerminando a trilogia, me pareceu que o segundo livro, mesmo sendo muito bom, não faria falta alguma, mas não também não prejudica o conjunto.", "oy": 2016, "rc": 1}, {"id": "35919149", "t": "Astrofísica Para Apressados", "a": "Neil deGrasse Tyson", "i13": "9788542210996", "i10": "8542210999", "r": 4.0, "p": 192, "dr": "2018/04/17", "da": "2018/04/15", "sh": "read", "pub": "Planeta", "bd": "Hardcover", "rv": "Os primeiros capítulos são bem difíceis de entender e acompanhar, mas depois vai ficando mais simples. o Neil deGrasse é muito bom, ele sempre se esforça para explicar esses temas complexos da forma mais simples possível. E olhe que as vezes o \"mais simples possível\" já é complexo.\n\nO livro é curto, poderia até se aprofundar mais. Mas como o título diz: é para apressados.\n\nGostei bastante.", "oy": 2017, "rc": 1}, {"id": "36516509", "t": "A sutil arte de ligar o f*da-se: Uma estratégia inusitada para uma vida melhor", "a": "Mark Manson", "i13": null, "i10": "855100249X", "r": 3.0, "p": 190, "dr": "2018/04/15", "da": "2018/04/14", "sh": "read", "pub": "Intrínseca", "bd": "Kindle Edition", "rv": "Me parece que o livro começa de uma forma e depois muda após o terceiro capítulo. Mudou para um tom mais sério e assumiu efetivamente a categoria de um livro de autoajuda, o que não é muito meu tipo de leitura.\n\nDe qualquer forma, apresenta uns conceitos e pontos de vistas interessantes. Mas o que mais gostei foram as histórias pessoais do autor e de outras pessoas ( famosas ou não) para ilustrar suas ideias.", "oy": 2016, "rc": 1}, {"id": "11166891", "t": "77 Shadow Street (Pendleton, #1)", "a": "Dean Koontz", "i13": null, "i10": null, "r": 2.0, "p": 451, "dr": "2018/01/12", "da": "2017/12/28", "sh": "read", "pub": "Bantam", "bd": "Hardcover", "rv": "Não gostei. Cheio de clichês, confuso, cansativo e com um final que não explica tudo que deveria.", "oy": 2011, "rc": 1}, {"id": "25814278", "t": "Finders Keepers (Bill Hodges Trilogy, #2)", "a": "Stephen King", "i13": null, "i10": null, "r": 4.0, "p": 528, "dr": "2018/04/14", "da": "2018/02/15", "sh": "read", "pub": "Pocket Books", "bd": "Paperback", "rv": "Assim como no primeiro da trilogia, a terceira parte do livro é tensa. Devorei.\nA história é bem legal e é incrível como King desenvolve os personagens. Ele escreve de um jeito que é quase perfeita as cenas que visualizamos, como se fosse um filme.\n\nAnsioso para a conclusão da trilogia.", "oy": 2015, "rc": 1}, {"id": "18068311", "t": "Holocausto brasileiro: Vida, genocídio e 60 mil mortes no maior hospício do Brasil", "a": "Daniela Arbex", "i13": "9788581301570", "i10": "8581301576", "r": 4.0, "p": 256, "dr": "2018/04/14", "da": "2018/03/06", "sh": "read", "pub": "Geração Editorial", "bd": "Paperback", "rv": "Recentemente terminei um livro sobre a segunda guerra mundial e as similaridades entre o holocausto da guerrra e esse do livro da Arbex, realmente são grandes. Lugares fechados; pessoas em condições subumanas tentando sobreviver; aniquilação em massa; pesquisas que passam muito a fronteira do aceitável e a prática de trabalhos forçados.\n\nApesar de ser um livro bem “pesado”, achei que as histórias escolhidas pela autora tem desfechos esperançosos, às vezes até felizes e com certeza, todos emocionantes.", "oy": 2013, "rc": 1}, {"id": "17975278", "t": "Sycamore Row", "a": "John Grisham", "i13": null, "i10": null, "r": 4.0, "p": 466, "dr": "2018/03/30", "da": "2017/12/28", "sh": "read", "pub": "Doubleday", "bd": "ebook", "rv": "Apesar de ser uma continuação do A Time to Kill, não é tão bom como o anterior. Legal ver os mesmos personagens de volta e mais uma história de tribunal. A história prende e o tema principal é interessante.  Achei que podia ser um livro mais curto.\n\nDe qualquer forma, mesmo a trama girar novamente, mesmo que de forma parcial, em torno do racismo, é um bom livro.", "oy": 2013, "rc": 1}, {"id": "22596057", "t": "A Segunda Guerra Mundial", "a": "Martin Gilbert", "i13": "9788577344673", "i10": "8577344673", "r": 4.0, "p": 976, "dr": "2018/03/23", "da": "2017/08/18", "sh": "read", "pub": "Casa da Palavra", "bd": "Paperback", "rv": "O autor fez um trabalho árduo de pesquisa, pois em mais de 900 páginas, relata os detalhes da guerra em ordem cronológica, citando nomes de pessoas, navios, cidades e operações de guerra.\n\nEsse trabalho detalhado, que faz com que seja um livro histórico muito bom, para mim também é o seu defeito, pois por vezes acaba sendo cansativo. \n\nSenti falta no começo de explicar mais em detalhes os motivos que iniciaram a guerra, o livro já começa logo no primeiro dia em setembro de 1939.\n\nLogicamente que esses meus pequenos apontamentos não tiram a importância ou ferem a qualidade do livro. Aprendi muito, me surpreendi com algumas histórias e com certeza, depois de 37 dias, encerro minha leitura com mais conhecimento e ao mesmo tempo um pouco triste com a capacidade humana de destruir.", "oy": 1989, "rc": 1}, {"id": "17900840", "t": "A Startup Enxuta: como os empreendedores atuais utilizam a inovação contínua para criar empresas extremamente bem-sucedidas", "a": "Eric Ries", "i13": "9788581780047", "i10": "8581780040", "r": 3.0, "p": 288, "dr": "2018/04/08", "da": "2018/03/15", "sh": "read", "pub": "LeYa", "bd": "Paperback", "rv": "O tema é interessante, alguns conceitos e ideias muito boas, mas achei meio cansativo e repetitivo.", "oy": 2011, "rc": 1}, {"id": "34752268", "t": "Mr. Mercedes", "a": "Stephen King", "i13": "9781501180767", "i10": "1501180762", "r": 4.0, "p": 527, "dr": "2018/04/05", "da": "2018/02/15", "sh": "read", "pub": "Pocket Books", "bd": "Mass Market Paperback", "rv": "Como sempre King prende a atenção do início ao fim.  Apesar de o começo ser bem característico dele, me parece que a história segue mais um estilo policial, o que gostei bastante.\n\nO final é tenso.", "oy": 2014, "rc": 1}, {"id": "10618", "t": "Apt Pupil", "a": "Stephen King", "i13": "9780751525670", "i10": "0751525677", "r": 4.0, "p": 179, "dr": "2018/02/18", "da": "2017/12/28", "sh": "read", "pub": "Warner", "bd": "Paperback", "rv": "Li o livro em 2 dias e gostei bastante. Como sempre Stephen King consegue nos prender do começo ao fim. É interessante ver a evolução ( ou seria involução?) do personagem principal.", "oy": 1982, "rc": 1}, {"id": "18211890", "t": "As Armas da Persuasão: Como Influenciar e Não Se Deixar Influenciar", "a": "Robert B. Cialdini", "i13": null, "i10": null, "r": 4.0, "p": 335, "dr": "2018/02/16", "da": "2017/12/28", "sh": "read", "pub": "Sextante", "bd": "Kindle Edition", "rv": "Livro bem interessante. O autor pesquisou bastante, vide a extensa quantidade de nomes de outros autores que são mencionados.\n\nMostra conceitos de persuasão e os explica com diversos exemplos, o que torna o entendimento mais fácil.", "oy": 1984, "rc": 1}, {"id": "25810098", "t": "Gray Mountain", "a": "John Grisham", "i13": "9781101964873", "i10": "1101964871", "r": 3.0, "p": 384, "dr": "2018/02/04", "da": "2017/10/29", "sh": "read", "pub": "Vintage", "bd": "Paperback", "rv": "Não é dos melhores, mas não é ruim. Leitura rápida, algumas historias interessantes mas creio que ao final ficamos com aquelas sensação que faltaram algumas respostas.", "oy": 2014, "rc": 1}, {"id": "18015195", "t": "Doctor Sleep (The Shining, #2)", "a": "Stephen King", "i13": "9781451698862", "i10": "1451698860", "r": 4.0, "p": 672, "dr": "2017/11/03", "da": "2017/10/15", "sh": "read", "pub": "Pocket Books", "bd": "Mass Market Paperback", "rv": "Não é melhor que o original, mas é bom. Como todos os livros do King, prende a atenção.\n\nA leitura e o inglês são mais fáceis que o original.", "oy": 2013, "rc": 1}, {"id": "18519124", "t": "Os Irmãos Karamázov", "a": "Fyodor Dostoevsky", "i13": "9788572329415", "i10": "8572329412", "r": 4.0, "p": 976, "dr": "2017/12/16", "da": "2017/08/01", "sh": "read", "pub": "Martin Claret", "bd": "Hardcover", "rv": "Que livro difícil. No começo achei que não ia aguentar, mas depois fui pegando gosto e fiquei ansioso pelo final.\n\nDostoyvesk é ótimo, mas confesso que teve alguns capítulos que não entendi muita coisa.\n\nLivro fislosófico.", "oy": 1879, "rc": 1}, {"id": "28093104", "t": "E não sobrou nenhum (Portuguese Edition)", "a": "Agatha Christie", "i13": "9788525057662", "i10": "8525057665", "r": 5.0, "p": 323, "dr": "2017/12/19", "da": "2017/11/26", "sh": "read", "pub": "Globo Livros", "bd": "Kindle Edition", "rv": "Não vou chover no molhado: é o melhor da autora inglesa", "oy": 1939, "rc": 1}, {"id": "864795", "t": "Johnny Angel", "a": "Danielle Steel", "i13": "9780385335492", "i10": "0385335490", "r": 3.0, "p": 192, "dr": "2017/12/22", "da": "2017/10/31", "sh": "read", "pub": "Delacorte Press", "bd": "Hardcover", "rv": "Li em 2 dias. Livro fácil, parece um filme da sessão da tarde. Bem agua com açúcar e final previsível. Não é ruim.", "oy": 2003, "rc": 1}, {"id": "6567657", "t": "A Time to Kill", "a": "John Grisham", "i13": null, "i10": null, "r": 4.0, "p": 655, "dr": "2017/12/29", "da": "2017/10/29", "sh": "read", "pub": "Dell", "bd": "Mass Market Paperback", "rv": "Histórias de tribunal me fascinam e o Grisham escreve de uma forma muito fácil e fluida. Devoro os livros dele. Gostei bastante da trama, apesar de novamente ser um livro centrado no racismo.\n\n", "oy": 1989, "rc": 1}, {"id": "30053054", "t": "Como organizar sua vida financeira", "a": "Gustavo Cerbasi", "i13": "9788543102580", "i10": "8543102588", "r": 3.0, "p": 160, "dr": "2018/01/13", "da": "2017/12/28", "sh": "read", "pub": "Sextante", "bd": "Paperback", "rv": "Inicialmente achei que iria me frustrar, mas gostei do livro. Leitura rápida e simples. Sugiro ao autor uma nova versão mais aprofundada", "oy": 2009, "rc": 1}, {"id": "35075596", "t": "A Mente Acima do Dinheiro", "a": "Brad Klontz", "i13": null, "i10": null, "r": 2.0, "p": null, "dr": "2018/01/24", "da": "2017/12/28", "sh": "read", "pub": null, "bd": "Unknown Binding", "rv": "Infelizmente não gostei. Livro cansativo, repetitivo e mais parece uma propaganda dos serviços que os autores prestam. \nTem alguns poucos momentos bons, mas no geral, pelo menos pra mim, agregou muito pouco.", "oy": null, "rc": 1}, {"id": "5355", "t": "The Chamber", "a": "John Grisham", "i13": "9780385339667", "i10": "0385339666", "r": 4.0, "p": 632, "dr": "2017/10/14", "da": "2017/09/28", "sh": "read", "pub": "Delta Trade Paperbacks", "bd": "Paperback", "rv": null, "oy": 1994, "rc": 1}, {"id": "12977531", "t": "The Shining (The Shining #1)", "a": "Stephen King", "i13": null, "i10": null, "r": 4.0, "p": 659, "dr": "2017/09/02", "da": "2017/08/18", "sh": "read", "pub": "Anchor", "bd": "Mass Market Paperback", "rv": null, "oy": 1977, "rc": 1}, {"id": "30965703", "t": "Homo Deus: A Brief History of Tomorrow", "a": "Yuval Noah Harari", "i13": "9781784703936", "i10": "1784703931", "r": 3.0, "p": 513, "dr": "2017/08/21", "da": "2017/08/01", "sh": "read", "pub": "RANDOM HOUSE UK", "bd": "Paperback", "rv": null, "oy": 2015, "rc": 1}, {"id": "25681499", "t": "Sapiens: Uma breve história da humanidade", "a": "Yuval Noah Harari", "i13": "9788525432186", "i10": "8525432180", "r": 4.0, "p": 464, "dr": "2017/07/27", "da": "2017/07/29", "sh": "read", "pub": "L&PM Editores", "bd": "Paperback", "rv": null, "oy": 2011, "rc": 1}]</script>
+<script id="stats-data" type="application/json">{"totalBooks": 340, "totalRead": 339, "totalReading": 1, "totalPages": 125335, "avgRating": 3.49, "ratingDist": [{"star": 5, "count": 39}, {"star": 4, "count": 119}, {"star": 3, "count": 151}, {"star": 2, "count": 28}, {"star": 1, "count": 2}], "byYear": [{"year": "2017", "count": 13, "pages": 6317}, {"year": "2018", "count": 53, "pages": 18637}, {"year": "2019", "count": 40, "pages": 10840}, {"year": "2020", "count": 31, "pages": 10127}, {"year": "2021", "count": 46, "pages": 14942}, {"year": "2022", "count": 44, "pages": 17509}, {"year": "2023", "count": 30, "pages": 14599}, {"year": "2024", "count": 33, "pages": 13319}, {"year": "2025", "count": 34, "pages": 12639}, {"year": "2026", "count": 15, "pages": 6406}], "topAuthors": [{"author": "Stephen King", "count": 35}, {"author": "John Grisham", "count": 21}, {"author": "Ken Follett", "count": 16}, {"author": "Jorge Amado", "count": 16}, {"author": "Nicholas Sparks", "count": 10}, {"author": "Charlie Donlea", "count": 9}, {"author": "Diana Gabaldon", "count": 9}, {"author": "Arthur Conan Doyle", "count": 9}, {"author": "Isaac Asimov", "count": 6}, {"author": "Gustavo Cerbasi", "count": 5}], "distinctAuthors": 168, "longest": {"title": "A Dança da Morte", "author": "Stephen King", "pages": 1248}, "shortest": {"title": "DevOps for Dummies", "author": "Sanjeev Sharma", "pages": 40}, "fiveStarCount": 39, "firstYear": "2017", "lastYear": "2026", "rereadCount": 2, "rereadExtra": 3, "pace": {"avgGapDays": 10.1, "pagesPerDay": 37.9, "busiestMonth": "2022/02", "busiestMonthCount": 9, "spanDays": 3307, "thisYear": "2026", "thisYearBooks": 15, "thisYearPages": 6406}}</script>
+<script id="cover-data" type="application/json">{}</script>
+<script>
+const BOOKS = JSON.parse(document.getElementById('books-data').textContent);
+const STATS = JSON.parse(document.getElementById('stats-data').textContent);
+const PREBAKED_COVERS = JSON.parse(document.getElementById('cover-data').textContent);
+const GENERATED_AT = "17/08/2026";
+
+/* ---------------- helpers ---------------- */
+function fmtInt(n){ return (n||0).toLocaleString('pt-BR'); }
+function coverUrl(book, size){
+  const id = book.i13 || book.i10;
+  if(!id) return null;
+  return `https://covers.openlibrary.org/b/isbn/${id}-${size}.jpg?default=false`;
+}
+function hashHue(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = str.charCodeAt(i) + ((h<<5)-h); }
+  return Math.abs(h) % 360;
+}
+function starString(r){
+  if(!r) return '';
+  const full = Math.round(r);
+  return '★'.repeat(full) + '☆'.repeat(5-full);
+}
+function parseDate(d){ return d ? new Date(d.replace(/\//g,'-')) : null; }
+function fmtDatePt(d){
+  if(!d) return '—';
+  const dt = parseDate(d);
+  return dt.toLocaleDateString('pt-BR', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+/* ---------------- hero + dashboard ---------------- */
+function renderHero(){
+  document.getElementById('heroCount').textContent = fmtInt(STATS.totalRead);
+  const meta = document.getElementById('heroMeta');
+  meta.innerHTML = `
+    <span><b>${fmtInt(STATS.totalPages)}</b> páginas viradas</span>
+    <span><b>${STATS.distinctAuthors}</b> autores diferentes</span>
+    <span><b>${STATS.avgRating.toFixed(2)}</b> nota média</span>
+    <span>desde <b>${STATS.firstYear}</b></span>
+  `;
+  document.getElementById('callNumber').textContent = `EST. ${STATS.firstYear}–${STATS.lastYear} · ${STATS.totalBooks} FICHAS NO ACERVO`;
+  document.getElementById('footInfo').textContent = `${STATS.totalBooks} livros catalogados · atualizado em ${GENERATED_AT}`;
+}
+
+function renderStatCards(){
+  const wrap = document.getElementById('statCards');
+  const cards = [
+    {tab:'Total lido', value: fmtInt(STATS.totalRead), note: `de ${STATS.totalBooks} na estante`},
+    {tab:'Páginas', value: fmtInt(STATS.totalPages), note: `média de ${Math.round(STATS.totalPages/Math.max(STATS.totalRead,1))} pág./livro`},
+    {tab:'Nota média', value: STATS.avgRating.toFixed(2), note: `${STATS.fiveStarCount} livros com 5 estrelas`},
+    {tab:'Autores', value: fmtInt(STATS.distinctAuthors), note: `top: ${STATS.topAuthors[0].author}`},
+    {tab:'Relidos', value: fmtInt(STATS.rereadCount), note: STATS.rereadCount>0 ? 'com mais de 1 leitura no Goodreads' : 'nenhum registrado no Goodreads'},
+  ];
+  wrap.innerHTML = cards.map(c => `
+    <div class="icard">
+      <div class="icard-tab">${c.tab}</div>
+      <div class="icard-value">${c.value}</div>
+      <div class="icard-note">${c.note}</div>
+    </div>
+  `).join('');
+}
+
+function renderYearChart(){
+  const svg = document.getElementById('yearChart');
+  const data = STATS.byYear;
+  const max = Math.max(...data.map(d=>d.count));
+  const W = 640, H = 190, padB = 26, padT = 18;
+  const bw = (W / data.length) * 0.56;
+  const gap = (W / data.length);
+  let html = '';
+  data.forEach((d,i)=>{
+    const h = ((H-padB-padT) * d.count) / max;
+    const x = i*gap + (gap-bw)/2;
+    const y = H - padB - h;
+    html += `<g class="yc-group" data-year="${d.year}" style="cursor:pointer">`;
+    html += `<rect class="yc-hit" x="${x.toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H-padB}" fill="transparent"></rect>`;
+    html += `<rect class="yc-bar" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3"><title>${d.year}: ${d.count} livros, ${fmtInt(d.pages)} páginas — clique para filtrar</title></rect>`;
+    html += `<text class="yc-count" x="${(x+bw/2).toFixed(1)}" y="${(y-6).toFixed(1)}" text-anchor="middle">${d.count}</text>`;
+    html += `<text class="yc-label" x="${(x+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle">'${d.year.slice(2)}</text>`;
+    html += `</g>`;
+  });
+  svg.innerHTML = html;
+  document.getElementById('yearChartRange').textContent = `${STATS.firstYear}–${STATS.lastYear}`;
+  svg.querySelectorAll('.yc-group').forEach(g => {
+    g.addEventListener('click', () => setChartFilter('year', g.dataset.year));
+  });
+}
+
+function renderRatingRows(){
+  const wrap = document.getElementById('ratingRows');
+  const max = Math.max(...STATS.ratingDist.map(r=>r.count));
+  wrap.innerHTML = STATS.ratingDist.map(r => `
+    <div class="rating-row" data-star="${r.star}" style="cursor:pointer" title="Clique para filtrar">
+      <div class="stars">${'★'.repeat(r.star)}</div>
+      <div class="rating-track"><div class="rating-fill" style="width:${max? (r.count/max*100):0}%"></div></div>
+      <div class="cnt">${r.count}</div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.rating-row').forEach(row => {
+    row.addEventListener('click', () => setChartFilter('rating', parseInt(row.dataset.star)));
+  });
+}
+
+function renderAuthors(){
+  const wrap = document.getElementById('authorsList');
+  const max = STATS.topAuthors[0].count;
+  wrap.innerHTML = STATS.topAuthors.slice(0,8).map((a,i) => `
+    <div class="author-row" data-author="${escapeHtml(a.author)}" style="cursor:pointer" title="Clique para filtrar">
+      <div class="author-rank">${String(i+1).padStart(2,'0')}</div>
+      <div class="author-name">${escapeHtml(a.author)}</div>
+      <div class="author-count">${a.count}</div>
+      <div class="author-bar-wrap"><div class="author-bar" style="width:${(a.count/max*100).toFixed(0)}%"></div></div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.author-row').forEach(row => {
+    row.addEventListener('click', () => setChartFilter('author', row.dataset.author));
+  });
+}
+
+function renderMisc(){
+  document.getElementById('longestTitle').textContent = STATS.longest.title;
+  document.getElementById('longestSub').textContent = `${STATS.longest.author} · ${fmtInt(STATS.longest.pages)} páginas`;
+  document.getElementById('shortestTitle').textContent = STATS.shortest.title;
+  document.getElementById('shortestSub').textContent = `${STATS.shortest.author} · ${fmtInt(STATS.shortest.pages)} páginas`;
+}
+
+function renderPace(){
+  const p = STATS.pace;
+  const wrap = document.getElementById('paceGrid');
+  const items = [
+    {tab:'Ritmo médio', v:`${p.avgGapDays}`, u:'dias entre livros'},
+    {tab:'Leitura média', v:`${p.pagesPerDay}`, u:'páginas por dia'},
+    {tab:'Mês mais produtivo', v:`${p.busiestMonthCount}`, u:`livros em ${p.busiestMonth.replace('/','–')}`},
+    {tab:`Em ${p.thisYear}`, v:`${p.thisYearBooks}`, u:`livros · ${fmtInt(p.thisYearPages)} páginas`},
+  ];
+  wrap.innerHTML = items.map(i => `
+    <div class="pace-item">
+      <div class="icard-tab">${i.tab}</div>
+      <div class="pv">${i.v} <small>${i.u}</small></div>
+    </div>
+  `).join('');
+}
+
+/* ---------------- genre (derived client-side via Google Books, cached) ---------------- */
+const GENRE_CACHE_PREFIX = 'biblioteca:genre:';
+let bookGenreMap = {};
+function getCachedGenre(id){ try{ return localStorage.getItem(GENRE_CACHE_PREFIX+id); }catch(e){ return null; } }
+function setCachedGenre(id,val){ try{ localStorage.setItem(GENRE_CACHE_PREFIX+id,val); }catch(e){} }
+
+function simplifyGenre(raw){
+  if(!raw) return null;
+  const g = raw.split('/')[0].trim();
+  const map = {
+    'Fiction':'Ficção','Juvenile Fiction':'Ficção juvenil','Biography & Autobiography':'Biografia',
+    'History':'História','Business & Economics':'Negócios','Self-Help':'Autoajuda',
+    'Science':'Ciência','Psychology':'Psicologia','Religion':'Religião','Philosophy':'Filosofia',
+    'Comics & Graphic Novels':'Quadrinhos','Poetry':'Poesia','Cooking':'Culinária',
+    'Body, Mind & Spirit':'Espiritualidade','Family & Relationships':'Relacionamentos',
+    'Literary Criticism':'Crítica literária','Political Science':'Política','Law':'Direito',
+    'Health & Fitness':'Saúde','Social Science':'Ciências sociais','True Crime':'True Crime',
+  };
+  return map[g] || g;
+}
+
+async function fetchGenre(book){
+  const cached = getCachedGenre(book.id);
+  if(cached !== null) return cached === 'none' ? null : cached;
+  try{
+    let q = book.i13 ? 'isbn:'+book.i13 : (book.i10 ? 'isbn:'+book.i10 : 'intitle:'+book.t+' inauthor:'+book.a);
+    const res = await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=1&q=' + encodeURIComponent(q));
+    const data = await res.json();
+    const cats = data.items && data.items[0] && data.items[0].volumeInfo && data.items[0].volumeInfo.categories;
+    const genre = cats && cats[0] ? simplifyGenre(cats[0]) : null;
+    setCachedGenre(book.id, genre || 'none');
+    return genre;
+  } catch(e){
+    return null;
+  }
+}
+
+async function loadGenres(){
+  const readBooks = BOOKS.filter(b => b.sh === 'read');
+  const counts = {};
+  let processed = 0;
+  const statusEl = document.getElementById('genreStatus');
+  const CONCURRENCY = 6;
+  let idx = 0;
+  async function worker(){
+    while(idx < readBooks.length){
+      const book = readBooks[idx++];
+      const genre = await fetchGenre(book);
+      if(genre){ counts[genre] = (counts[genre]||0) + 1; bookGenreMap[book.id] = genre; }
+      processed++;
+      if(processed % 20 === 0 || processed === readBooks.length){
+        statusEl.textContent = processed === readBooks.length ? 'concluído' : `classificando ${processed}/${readBooks.length}…`;
+        renderGenreList(counts);
+      }
+    }
+  }
+  const workers = [];
+  for(let i=0;i<CONCURRENCY;i++) workers.push(worker());
+  await Promise.all(workers);
+  statusEl.textContent = 'via Google Books · aproximado';
+  renderGenreList(counts);
+}
+
+function renderGenreList(counts){
+  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const wrap = document.getElementById('genreList');
+  if(entries.length === 0){
+    wrap.innerHTML = `<div class="genre-loading">Ainda sem classificações suficientes…</div>`;
+    return;
+  }
+  const max = entries[0][1];
+  wrap.innerHTML = entries.map(([g,c],i) => `
+    <div class="author-row" data-genre="${escapeHtml(g)}" style="cursor:pointer" title="Clique para filtrar">
+      <div class="author-rank">${String(i+1).padStart(2,'0')}</div>
+      <div class="author-name">${escapeHtml(g)}</div>
+      <div class="author-count">${c}</div>
+      <div class="author-bar-wrap"><div class="author-bar" style="width:${(c/max*100).toFixed(0)}%"></div></div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.author-row').forEach(row => {
+    row.addEventListener('click', () => setChartFilter('genre', row.dataset.genre));
+  });
+}
+
+/* ---------------- cover rendering with fallback ---------------- */
+function escapeHtml(s){
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function placeholderInnerHtml(title, author){
+  return `<div><div class="ph-title">${escapeHtml((title||'').slice(0,60))}</div><div class="ph-author">${escapeHtml((author||'').toUpperCase())}</div></div>`;
+}
+function badgeForBook(b){
+  if(b.r) return `<div class="cover-badge">★ ${b.r.toFixed(0)}</div>`;
+  if(b.sh==='currently-reading') return `<div class="cover-badge">lendo</div>`;
+  return '';
+}
+function rereadBadge(b){
+  return (b.rc && b.rc > 1) ? `<div class="cover-reread">relido ${b.rc}×</div>` : '';
+}
+function showPlaceholder(frame, book){
+  const hue = hashHue(book.a || book.t || '');
+  frame.classList.add('placeholder');
+  frame.style.background = `linear-gradient(155deg, hsl(${hue},38%,26%), hsl(${(hue+30)%360},44%,15%))`;
+  frame.innerHTML = placeholderInnerHtml(book.t, book.a) + badgeForBook(book) + rereadBadge(book);
+}
+function swapInImage(frame, url, book){
+  const img = new Image();
+  img.loading = 'lazy';
+  img.alt = 'Capa de ' + book.t;
+  img.onerror = () => showPlaceholder(frame, book);
+  img.src = url;
+  frame.classList.remove('placeholder');
+  frame.style.background = '';
+  frame.innerHTML = '';
+  frame.appendChild(img);
+  frame.insertAdjacentHTML('beforeend', badgeForBook(book) + rereadBadge(book));
+}
+async function lookupGoogleBooks(frame, book){
+  const attempts = [];
+  if(book.i13) attempts.push('isbn:' + book.i13);
+  if(book.i10) attempts.push('isbn:' + book.i10);
+  attempts.push('intitle:' + book.t + ' inauthor:' + book.a);
+  for(const q of attempts){
+    try{
+      const res = await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=1&q=' + encodeURIComponent(q));
+      const data = await res.json();
+      const links = data.items && data.items[0] && data.items[0].volumeInfo && data.items[0].volumeInfo.imageLinks;
+      const thumb = links && (links.thumbnail || links.smallThumbnail);
+      if(thumb){
+        swapInImage(frame, thumb.replace('http://','https://'), book);
+        return;
+      }
+    } catch(e){ /* try next tier */ }
+  }
+  showPlaceholder(frame, book);
+}
+function handleCoverError(img){
+  const frame = img.closest('.cover-frame');
+  const book = BOOKS.find(b => b.id === img.dataset.id);
+  if(!frame || !book) return;
+  lookupGoogleBooks(frame, book);
+}
+function coverHtml(book, showBadge){
+  showBadge = showBadge !== false;
+  const badge = showBadge ? (badgeForBook(book) + rereadBadge(book)) : '';
+  if(PREBAKED_COVERS[book.id]){
+    return `<div class="cover-frame">
+        <img loading="lazy" src="${PREBAKED_COVERS[book.id]}" alt="Capa de ${escapeHtml(book.t)}">${badge}
+      </div>`;
+  }
+  const url = coverUrl(book, 'M');
+  if(!url){
+    return `<div class="cover-frame needs-lookup" data-id="${escapeHtml(book.id)}"></div>`;
+  }
+  return `<div class="cover-frame">
+      <img loading="lazy" src="${url}" alt="Capa de ${escapeHtml(book.t)}" data-id="${escapeHtml(book.id)}"
+        onerror="handleCoverError(this)">${badge}
+    </div>`;
+}
+function enhanceCovers(container){
+  container.querySelectorAll('.cover-frame.needs-lookup').forEach(frame => {
+    const book = BOOKS.find(b => b.id === frame.dataset.id);
+    if(book) lookupGoogleBooks(frame, book);
+  });
+}
+
+/* ---------------- shelf rendering ---------------- */
+let currentList = [];
+let chartYearFilter = null;
+let chartRatingFilter = null;
+let chartAuthorFilter = null;
+let chartGenreFilter = null;
+
+function activeChartFilterChip(){
+  const parts = [];
+  if(chartYearFilter) parts.push({label:`Ano: ${chartYearFilter}`, clear:()=>{chartYearFilter=null;}});
+  if(chartRatingFilter) parts.push({label:`Nota: ${chartRatingFilter}★`, clear:()=>{chartRatingFilter=null;}});
+  if(chartAuthorFilter) parts.push({label:`Autor: ${chartAuthorFilter}`, clear:()=>{chartAuthorFilter=null;}});
+  if(chartGenreFilter) parts.push({label:`Gênero: ${chartGenreFilter}`, clear:()=>{chartGenreFilter=null;}});
+  return parts;
+}
+
+function renderActiveChips(){
+  const wrap = document.getElementById('activeChips');
+  const chips = activeChartFilterChip();
+  if(chips.length === 0){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = chips.map((c,i) => `<button class="chip" data-idx="${i}">${escapeHtml(c.label)} <span>&times;</span></button>`).join('');
+  wrap.querySelectorAll('.chip').forEach((el,i) => {
+    el.addEventListener('click', () => { chips[i].clear(); applyFilters(); });
+  });
+}
+
+function setChartFilter(type, value){
+  if(type==='year') chartYearFilter = (chartYearFilter === value) ? null : value;
+  if(type==='rating') chartRatingFilter = (chartRatingFilter === value) ? null : value;
+  if(type==='author') chartAuthorFilter = (chartAuthorFilter === value) ? null : value;
+  if(type==='genre') chartGenreFilter = (chartGenreFilter === value) ? null : value;
+  applyFilters();
+  document.getElementById('livros').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function applyFilters(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const status = document.querySelector('.pill-btn.active').dataset.status;
+  const author = document.getElementById('authorSelect').value;
+  const sort = document.getElementById('sortSelect').value;
+
+  let list = BOOKS.filter(b => {
+    if(status !== 'all' && b.sh !== status) return false;
+    if(author && b.a !== author) return false;
+    if(chartAuthorFilter && b.a !== chartAuthorFilter) return false;
+    if(chartYearFilter && yearKey(b) !== chartYearFilter) return false;
+    if(chartRatingFilter && Math.round(b.r||0) !== chartRatingFilter) return false;
+    if(chartGenreFilter && bookGenreMap[b.id] !== chartGenreFilter) return false;
+    if(q && !(b.t.toLowerCase().includes(q) || b.a.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  const [field, dir] = sort.split('-');
+  list.sort((a,b) => {
+    let va, vb;
+    if(field === 'date'){ va = a.dr || a.da || '0000'; vb = b.dr || b.da || '0000'; }
+    else if(field === 'rating'){ va = a.r||0; vb = b.r||0; }
+    else if(field === 'pages'){ va = a.p||0; vb = b.p||0; }
+    else { va = a.t; vb = b.t; }
+    if(va < vb) return dir==='asc' ? -1 : 1;
+    if(va > vb) return dir==='asc' ? 1 : -1;
+    return 0;
+  });
+
+  currentList = list;
+  document.getElementById('resultCount').textContent = `${list.length} de ${BOOKS.length}`;
+  renderActiveChips();
+  renderShelf(list, sort);
+}
+
+function yearKey(b){
+  if(b.dr) return b.dr.slice(0,4);
+  if(b.da) return b.da.slice(0,4);
+  return 'Sem data';
+}
+
+function renderShelf(list, sort){
+  const container = document.getElementById('shelfContainer');
+  if(list.length === 0){
+    container.innerHTML = `<div class="empty-state"><span class="serif">Nenhum livro encontrado</span>Tente outra busca ou limpe os filtros.</div>`;
+    return;
+  }
+
+  // group by year read (desc) only when sorted by date; otherwise flat grid
+  if(sort.startsWith('date')){
+    const groups = {};
+    list.forEach(b => {
+      const y = yearKey(b);
+      (groups[y] = groups[y] || []).push(b);
+    });
+    let years = Object.keys(groups);
+    years.sort((a,b) => {
+      if(a==='Sem data') return 1;
+      if(b==='Sem data') return -1;
+      return sort==='date-asc' ? a-b : b-a;
+    });
+    container.innerHTML = years.map(y => `
+      <div class="year-group">
+        <div class="year-head">
+          <span class="yr">${y}</span>
+          <span class="yr-count mono">${groups[y].length} livro${groups[y].length>1?'s':''}</span>
+        </div>
+        <div class="shelf-row">
+          ${groups[y].map(b => bookCardHtml(b)).join('')}
+        </div>
+      </div>
+    `).join('');
+  } else {
+    container.innerHTML = `<div class="shelf-row">${list.map(b => bookCardHtml(b)).join('')}</div>`;
+  }
+
+  container.querySelectorAll('.book').forEach(el => {
+    el.addEventListener('click', () => openModal(el.dataset.id));
+  });
+  enhanceCovers(container);
+}
+
+function bookCardHtml(b){
+  const noDateFlag = (!b.dr && b.da) ? `<div class="no-date-flag" title="Sem data de leitura registrada — agrupado pela data em que foi adicionado (${fmtDatePt(b.da)})">s/ data</div>` : '';
+  return `
+    <div class="book" data-id="${escapeHtml(b.id)}">
+      ${coverHtml(b, true)}
+      ${noDateFlag}
+      <div class="book-meta">
+        <div class="b-title">${escapeHtml(b.t)}</div>
+        <div class="b-author">${escapeHtml(b.a)}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- currently reading banner ---------------- */
+function renderReadingBanner(){
+  const reading = BOOKS.filter(b => b.sh === 'currently-reading');
+  const wrap = document.getElementById('readingBanner');
+  if(reading.length === 0){ wrap.innerHTML=''; return; }
+  wrap.innerHTML = reading.map(b => `
+    <div class="reading-banner">
+      <div class="ribbon"></div>
+      <div class="cover-mini">${coverHtml(b, false)}</div>
+      <div class="reading-text">
+        <div class="eyebrow">Lendo agora</div>
+        <div class="book-title">${escapeHtml(b.t)}</div>
+        <div class="book-author">${escapeHtml(b.a)}</div>
+      </div>
+    </div>`).join('');
+  enhanceCovers(wrap);
+}
+/* ---------------- modal ---------------- */
+function openModal(id){
+  const b = BOOKS.find(x => x.id === id);
+  if(!b) return;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-cover">${coverHtml(b, false)}</div>
+    <div class="modal-info">
+      <div class="m-title">${escapeHtml(b.t)}</div>
+      <div class="m-author">${escapeHtml(b.a)}</div>
+      ${b.r ? `<div class="modal-stars">${starString(b.r)} <span style="color:var(--paper-dim); font-size:12px;">(${b.r.toFixed(0)}/5)</span></div>` : ''}
+      <div class="modal-grid">
+        <div><b>Editora</b>${escapeHtml(b.pub) || '—'}</div>
+        <div><b>Formato</b>${escapeHtml(b.bd) || '—'}</div>
+        <div><b>Páginas</b>${b.p ? fmtInt(b.p) : '—'}</div>
+        <div><b>Ano original</b>${b.oy || '—'}</div>
+        <div${b.rd ? ' style="grid-column:1/-1"' : ''}><b>Lido em</b>${b.rd ? b.rd.map(fmtDatePt).join(' · ') : (b.dr ? fmtDatePt(b.dr) : (b.da ? fmtDatePt(b.da) + ' (adicionado)' : '—'))}</div>
+        <div><b>Vezes lido</b>${b.rc || 1}${b.rc>1 ? ' (Goodreads)' : ''}</div>
+      </div>
+      ${b.rv ? `<div class="modal-review">${escapeHtml(b.rv)}</div>` : ''}
+      <div class="modal-stamp">${b.sh === 'currently-reading' ? 'EM LEITURA' : 'BAIXA CONFIRMADA'}</div>
+    </div>
+  `;
+  document.getElementById('modalBackdrop').classList.add('open');
+  enhanceCovers(document.getElementById('modalBody'));
+}
+document.getElementById('modalClose').addEventListener('click', () => {
+  document.getElementById('modalBackdrop').classList.remove('open');
+});
+document.getElementById('modalBackdrop').addEventListener('click', (e) => {
+  if(e.target.id === 'modalBackdrop') document.getElementById('modalBackdrop').classList.remove('open');
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') document.getElementById('modalBackdrop').classList.remove('open');
+});
+
+/* ---------------- filters wiring ---------------- */
+function populateAuthorSelect(){
+  const sel = document.getElementById('authorSelect');
+  const authors = [...new Set(BOOKS.map(b => b.a))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  authors.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    sel.appendChild(opt);
+  });
+}
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('authorSelect').addEventListener('change', applyFilters);
+document.getElementById('sortSelect').addEventListener('change', applyFilters);
+document.querySelectorAll('.pill-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  });
+});
+
+/* ---------------- init ---------------- */
+renderHero();
+renderStatCards();
+renderYearChart();
+renderRatingRows();
+renderAuthors();
+renderMisc();
+renderPace();
+renderReadingBanner();
+populateAuthorSelect();
+applyFilters();
+loadGenres();
+</script>
+</body>
+</html>
