@@ -26,6 +26,7 @@ import re
 import json
 import time
 import base64
+import threading
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -33,28 +34,49 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 OPENLIBRARY = "https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg?default=false"
 GOOGLE_BOOKS = "https://www.googleapis.com/books/v1/volumes?maxResults=1&q={q}"
-TIMEOUT = 10
-WORKERS = 5
-RETRIES = 3
+TIMEOUT = 8
+WORKERS = 8
+RETRIES = 2
+
+# A Open Library aceita varias chamadas ao mesmo tempo sem problema.
+# O Google Books, vindo dos servidores do GitHub, costuma limitar bastante
+# (muita gente usa o mesmo IP compartilhado). Por isso as chamadas pra ele
+# passam por um freio global: no maximo 1 a cada ~1.1s, para todo mundo.
+_google_lock = threading.Lock()
+_google_next_time = [0.0]
+GOOGLE_MIN_INTERVAL = 1.1
+
+
+def google_books_throttle():
+    with _google_lock:
+        now = time.time()
+        wait = _google_next_time[0] - now
+        if wait > 0:
+            time.sleep(wait)
+            now = time.time()
+        _google_next_time[0] = now + GOOGLE_MIN_INTERVAL
 
 
 def with_retries(fn, *args):
-    """Roda fn(*args), tentando de novo em caso de erro de rede/limite de
-    requisicoes, com uma pausa maior a cada tentativa. Devolve (resultado, None)
-    em caso de sucesso, ou (None, motivo_do_erro) se todas as tentativas falharem."""
+    """Roda fn(*args). Erros definitivos (404 = 'não existe') não são
+    tentados de novo, pra não perder tempo à toa. Só insiste em erros
+    temporários (limite de requisições, timeout, erro 5xx do servidor).
+    Devolve (resultado, None) em caso de sucesso, ou (None, motivo) se falhar."""
     last_error = None
     for attempt in range(RETRIES):
         try:
             return fn(*args), None
         except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None, "HTTP 404 (não encontrado)"  # definitivo, não insiste
             last_error = f"HTTP {e.code}"
             if e.code == 429:
                 time.sleep(2 + attempt * 2)
             else:
-                time.sleep(0.5 + attempt)
+                time.sleep(0.5)
         except Exception as e:
             last_error = str(e)[:80]
-            time.sleep(0.5 + attempt)
+            time.sleep(0.5)
     return None, last_error
 
 
@@ -66,18 +88,21 @@ def fetch_bytes(url):
         return data, ctype
 
 
-def fetch_json(url):
+def fetch_json_google(url):
+    """Igual ao fetch_json, mas passa pelo freio global antes de chamar."""
+    google_books_throttle()
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (biblioteca-pessoal)"})
     with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 
 def cover_for_book(book):
-    """Tenta Open Library pelo ISBN, depois Google Books (ISBN e depois
-    titulo+autor). Devolve (data, ctype, motivo_da_falha)."""
+    """Tenta Open Library pelo ISBN (rapido, sem limite forte), depois UMA
+    busca no Google Books (a melhor opção disponível: ISBN, ou título+autor
+    se não tiver ISBN). Devolve (data, ctype, motivo_da_falha)."""
     isbn13 = book.get("i13")
     isbn10 = book.get("i10")
-    last_reason = "sem ISBN e sem resultado no Google Books"
+    last_reason = "não encontrado em nenhuma fonte"
 
     # 1) Open Library por ISBN
     for isbn in filter(None, [isbn13, isbn10]):
@@ -89,35 +114,32 @@ def cover_for_book(book):
         elif err:
             last_reason = f"Open Library: {err}"
 
-    # 2) Google Books: por ISBN, depois por titulo+autor
-    queries = []
+    # 2) Uma única busca no Google Books (throttled) — prioriza ISBN, senão título+autor
     if isbn13:
-        queries.append("isbn:" + isbn13)
-    if isbn10:
-        queries.append("isbn:" + isbn10)
-    queries.append("intitle:{} inauthor:{}".format(book.get("t", ""), book.get("a", "")))
+        q = "isbn:" + isbn13
+    elif isbn10:
+        q = "isbn:" + isbn10
+    else:
+        q = "intitle:{} inauthor:{}".format(book.get("t", ""), book.get("a", ""))
 
-    for q in queries:
-        url = GOOGLE_BOOKS.format(q=urllib.parse.quote(q))
-        result, err = with_retries(fetch_json, url)
-        if err:
-            last_reason = f"Google Books: {err}"
-            continue
-        items = (result or {}).get("items") or []
-        if not items:
-            continue
+    url = GOOGLE_BOOKS.format(q=urllib.parse.quote(q))
+    result, err = with_retries(fetch_json_google, url)
+    if err:
+        return None, None, f"Google Books: {err}"
+
+    items = (result or {}).get("items") or []
+    if items:
         links = items[0].get("volumeInfo", {}).get("imageLinks", {})
         thumb = links.get("thumbnail") or links.get("smallThumbnail")
-        if not thumb:
-            continue
-        thumb = thumb.replace("http://", "https://")
-        img_result, err = with_retries(fetch_bytes, thumb)
-        if img_result:
-            data, ctype = img_result
-            if data and len(data) > 300:
-                return data, ctype, None
-        elif err:
-            last_reason = f"download da capa: {err}"
+        if thumb:
+            thumb = thumb.replace("http://", "https://")
+            img_result, err = with_retries(fetch_bytes, thumb)
+            if img_result:
+                data, ctype = img_result
+                if data and len(data) > 300:
+                    return data, ctype, None
+            elif err:
+                return None, None, f"download da capa: {err}"
 
     return None, None, last_reason
 
