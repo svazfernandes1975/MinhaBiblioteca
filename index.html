@@ -173,6 +173,10 @@
   .yc-bar:hover{opacity:1;}
   .yc-label,.yc-count{font-family:'JetBrains Mono',monospace; fill:var(--paper-dim); font-size:10.5px;}
   .yc-count{fill:var(--brass-light);}
+  .yc-delta{font-family:'JetBrains Mono',monospace; font-size:8.5px;}
+  .yc-delta-up{fill:#7fc98f;}
+  .yc-delta-down{fill:#e08585;}
+  .yc-delta-flat{fill:var(--muted);}
   .goal-num{font-family:'JetBrains Mono',monospace; font-size:9.5px; fill:var(--paper-dim);}
   .goal-num-inside{fill:var(--paper); font-weight:600;}
   .goal-num-inside-dark{fill:#1a1206; font-weight:600;}
@@ -183,9 +187,9 @@
   .tl-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:10px;}
   .tl-gridline{stroke:var(--line); stroke-width:1;}
   .tl-axis-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:9.5px;}
-  .tl-axis-label.tl-axis-right{fill:var(--burgundy-light);}
+  .tl-axis-label.tl-axis-right{fill:#ff9086;}
   .tl-axis-title{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:9.5px;}
-  .tl-axis-title.tl-axis-right{fill:var(--burgundy-light);}
+  .tl-axis-title.tl-axis-right{fill:#ff9086;}
 
   #scatterChart{width:100%; flex:1 1 auto; min-height:230px; display:block;}
   .sc-dot{opacity:0.78; transition:opacity .15s, r .15s; stroke:var(--bg); stroke-width:0.5;}
@@ -660,11 +664,33 @@ function wireTooltip(el, htmlFn){
   el.addEventListener('mouseleave', hideTooltip);
 }
 
+function yearDelta(data, i){
+  if(i === 0) return null;
+  const prev = data[i-1].count, curr = data[i].count;
+  if(prev === 0) return null;
+  const pct = Math.round(((curr-prev)/prev)*100);
+  return pct;
+}
+function pagesDelta(data, i){
+  if(i === 0) return null;
+  const prev = data[i-1].pages, curr = data[i].pages;
+  if(prev === 0) return null;
+  const pct = Math.round(((curr-prev)/prev)*100);
+  return pct;
+}
+function deltaLabel(pct){
+  if(pct === null) return '';
+  if(pct === 0) return '<tspan class="yc-delta yc-delta-flat">＝ 0%</tspan>';
+  const arrow = pct > 0 ? '▲' : '▼';
+  const cls = pct > 0 ? 'yc-delta-up' : 'yc-delta-down';
+  return `<tspan class="yc-delta ${cls}">${arrow} ${Math.abs(pct)}%</tspan>`;
+}
+
 function renderYearChart(){
   const svg = document.getElementById('yearChart');
   const data = STATS.byYear;
   const max = Math.max(...data.map(d=>d.count));
-  const W = 640, H = 190, padB = 26, padT = 18;
+  const W = 640, H = 190, padB = 26, padT = 30;
   const bw = (W / data.length) * 0.56;
   const gap = (W / data.length);
   let html = '';
@@ -672,9 +698,11 @@ function renderYearChart(){
     const h = ((H-padB-padT) * d.count) / max;
     const x = i*gap + (gap-bw)/2;
     const y = H - padB - h;
+    const delta = yearDelta(data, i);
     html += `<g class="yc-group" data-year="${d.year}" data-i="${i}" style="cursor:pointer">`;
     html += `<rect class="yc-hit" x="${x.toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H-padB}" fill="transparent"></rect>`;
     html += `<rect class="yc-bar" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3"></rect>`;
+    if(delta !== null) html += `<text x="${(x+bw/2).toFixed(1)}" y="${(y-19).toFixed(1)}" text-anchor="middle">${deltaLabel(delta)}</text>`;
     html += `<text class="yc-count" x="${(x+bw/2).toFixed(1)}" y="${(y-6).toFixed(1)}" text-anchor="middle">${d.count}</text>`;
     html += `<text class="yc-label" x="${(x+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle">'${d.year.slice(2)}</text>`;
     html += `</g>`;
@@ -683,8 +711,10 @@ function renderYearChart(){
   document.getElementById('yearChartRange').textContent = `${STATS.firstYear}–${STATS.lastYear}`;
   svg.querySelectorAll('.yc-group').forEach(g => {
     const d = data[+g.dataset.i];
+    const delta = yearDelta(data, +g.dataset.i);
+    const deltaText = delta === null ? '' : ` · ${delta>0?'+':''}${delta}% vs. ${data[+g.dataset.i-1].year}`;
     g.addEventListener('click', () => setChartFilter('year', g.dataset.year));
-    wireTooltip(g, () => `<b>${d.year}</b><span class="tt-sub">${d.count} livro${d.count===1?'':'s'} · ${fmtInt(d.pages)} páginas</span>`);
+    wireTooltip(g, () => `<b>${d.year}</b><span class="tt-sub">${d.count} livro${d.count===1?'':'s'} · ${fmtInt(d.pages)} páginas${deltaText}</span>`);
   });
 }
 
@@ -692,7 +722,7 @@ function renderPagesYearChart(){
   const svg = document.getElementById('pagesYearChart');
   const data = STATS.byYear;
   const max = Math.max(...data.map(d=>d.pages));
-  const W = 640, H = 190, padB = 26, padT = 18;
+  const W = 640, H = 190, padB = 26, padT = 30;
   const bw = (W / data.length) * 0.56;
   const gap = (W / data.length);
   let html = '';
@@ -701,9 +731,11 @@ function renderPagesYearChart(){
     const x = i*gap + (gap-bw)/2;
     const y = H - padB - h;
     const labelPages = d.pages >= 1000 ? (d.pages/1000).toFixed(1).replace('.0','') + 'k' : d.pages;
+    const delta = pagesDelta(data, i);
     html += `<g class="yc-group" data-year="${d.year}" data-i="${i}" style="cursor:pointer">`;
     html += `<rect class="yc-hit" x="${x.toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H-padB}" fill="transparent"></rect>`;
     html += `<rect class="yc-bar" style="fill:var(--burgundy-light)" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3"></rect>`;
+    if(delta !== null) html += `<text x="${(x+bw/2).toFixed(1)}" y="${(y-19).toFixed(1)}" text-anchor="middle">${deltaLabel(delta)}</text>`;
     html += `<text class="yc-count" style="fill:var(--burgundy-light)" x="${(x+bw/2).toFixed(1)}" y="${(y-6).toFixed(1)}" text-anchor="middle">${labelPages}</text>`;
     html += `<text class="yc-label" x="${(x+bw/2).toFixed(1)}" y="${H-8}" text-anchor="middle">'${d.year.slice(2)}</text>`;
     html += `</g>`;
@@ -712,8 +744,10 @@ function renderPagesYearChart(){
   document.getElementById('pagesYearRange').textContent = `${STATS.firstYear}–${STATS.lastYear}`;
   svg.querySelectorAll('.yc-group').forEach(g => {
     const d = data[+g.dataset.i];
+    const delta = pagesDelta(data, +g.dataset.i);
+    const deltaText = delta === null ? '' : ` · ${delta>0?'+':''}${delta}% vs. ${data[+g.dataset.i-1].year}`;
     g.addEventListener('click', () => setChartFilter('year', g.dataset.year));
-    wireTooltip(g, () => `<b>${d.year}</b><span class="tt-sub">${fmtInt(d.pages)} páginas · ${d.count} livro${d.count===1?'':'s'}</span>`);
+    wireTooltip(g, () => `<b>${d.year}</b><span class="tt-sub">${fmtInt(d.pages)} páginas · ${d.count} livro${d.count===1?'':'s'}${deltaText}</span>`);
   });
 }
 
@@ -774,14 +808,15 @@ function renderTimelineChart(){
   svg.innerHTML = `
     <defs>
       <linearGradient id="tlFade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--burgundy-light)" stop-opacity="1"/>
-        <stop offset="100%" stop-color="var(--burgundy-light)" stop-opacity="0.25"/>
+        <stop offset="0%" stop-color="#ff9086" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#ff9086" stop-opacity="0.35"/>
       </linearGradient>
     </defs>
     ${gridlines}
     ${axisLeft}
     ${axisRight}
     ${bars}
+    <path d="${linePath}" fill="none" stroke="var(--bg)" stroke-width="4.5" opacity="0.55"/>
     <path d="${linePath}" fill="none" stroke="url(#tlFade)" stroke-width="2.4"/>
     ${labels}
     ${hits}
@@ -880,7 +915,7 @@ function renderScatterChart(){
 function renderGoalsChart(){
   const svg = document.getElementById('goalsChart');
   const data = STATS.goals;
-  const W = 640, H = 200, padB = 26, padT = 22;
+  const W = 640, H = 200, padB = 26, padT = 34;
   const maxVal = Math.max(...data.map(d => Math.max(d.goal, d.achieved)));
   const gap = W / data.length;
   const bw = gap * 0.34;
