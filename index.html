@@ -147,11 +147,14 @@
   .icard-note{font-size:12px; color:var(--paper-dim); margin-top:6px; line-height:1.4;}
 
   .chart-grid{display:grid; grid-template-columns:1.5fr 1fr; gap:16px; align-items:start;}
-  .chart-grid-even{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;}
-  .chart-grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:start;}
+  .chart-grid-even{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch;}
+  .chart-grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:stretch;}
   @media(max-width:1050px){ .chart-grid-3{grid-template-columns:1fr 1fr;} }
   @media(max-width:900px){ .chart-grid,.chart-grid-even{grid-template-columns:1fr;} .card-grid{grid-template-columns:repeat(2,1fr);} }
   @media(max-width:640px){ .chart-grid-3{grid-template-columns:1fr;} }
+  .chart-card{display:flex; flex-direction:column;}
+  .stacked-col{display:flex; flex-direction:column; gap:16px;}
+  .stacked-col .chart-card{flex:1;}
   .legend-swatch{width:10px; height:10px; border-radius:3px; display:inline-block;}
   @media(max-width:520px){ .card-grid{grid-template-columns:1fr 1fr;} }
 
@@ -170,12 +173,19 @@
   .yc-bar:hover{opacity:1;}
   .yc-label,.yc-count{font-family:'JetBrains Mono',monospace; fill:var(--paper-dim); font-size:10.5px;}
   .yc-count{fill:var(--brass-light);}
+  .goal-num{font-family:'JetBrains Mono',monospace; font-size:9.5px; fill:var(--paper-dim);}
+  .goal-num-inside{fill:var(--paper); font-weight:600;}
+  .goal-num-inside-dark{fill:#1a1206; font-weight:600;}
 
   #timelineChart{width:100%; height:220px; display:block;}
   .tl-bar{fill:var(--brass); opacity:0.75; transition:opacity .15s;}
   .tl-bar:hover,.tl-bar.tl-bar-hover{opacity:1;}
   .tl-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:10px;}
   .tl-gridline{stroke:var(--line); stroke-width:1;}
+  .tl-axis-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:9.5px;}
+  .tl-axis-label.tl-axis-right{fill:var(--brass-light);}
+  .tl-axis-title{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:9.5px;}
+  .tl-axis-title.tl-axis-right{fill:var(--brass-light);}
 
   #scatterChart{width:100%; height:230px; display:block;}
   .sc-dot{opacity:0.78; transition:opacity .15s, r .15s; stroke:var(--bg); stroke-width:0.5;}
@@ -456,10 +466,17 @@
     </div>
 
     <div class="chart-grid-even" style="margin-top:16px;">
-      <div class="chart-card">
-        <h3>Distribuição de notas <span class="mono">/ 5</span></h3>
-        <div class="rating-rows" id="ratingRows"></div>
-        <div class="rating-summary" id="ratingSummary"></div>
+      <div class="stacked-col">
+        <div class="chart-card">
+          <h3>Distribuição de notas <span class="mono">/ 5</span></h3>
+          <div class="rating-rows" id="ratingRows"></div>
+          <div class="rating-summary" id="ratingSummary"></div>
+        </div>
+        <div class="chart-card">
+          <h3>Idiomas <span class="mono">livros · páginas</span></h3>
+          <div class="authors-list" id="langList"></div>
+          <div class="list-total" id="langTotal"></div>
+        </div>
       </div>
       <div class="chart-card">
         <h3>Dispersão por ano de publicação <span class="mono">cor = nota</span></h3>
@@ -468,7 +485,7 @@
       </div>
     </div>
 
-    <div class="chart-grid-3" style="margin-top:16px;">
+    <div class="chart-grid-even" style="margin-top:16px;">
       <div class="chart-card">
         <h3>Autores & livros <span class="mono">livros · páginas</span></h3>
         <div class="authors-list scroll-list" id="authorsList"></div>
@@ -478,11 +495,6 @@
         <h3>Gêneros <span class="mono">livros · páginas</span></h3>
         <div class="authors-list scroll-list" id="genreList"></div>
         <div class="list-total" id="genreTotal"></div>
-      </div>
-      <div class="chart-card">
-        <h3>Idiomas <span class="mono">livros · páginas</span></h3>
-        <div class="authors-list" id="langList"></div>
-        <div class="list-total" id="langTotal"></div>
       </div>
     </div>
 
@@ -572,7 +584,7 @@
 <script>
 const BOOKS = JSON.parse(document.getElementById('books-data').textContent);
 const STATS = JSON.parse(document.getElementById('stats-data').textContent);
-const GENERATED_AT = "22/08/2026";
+const GENERATED_AT = "24/08/2026";
 
 /* ---------------- helpers ---------------- */
 function fmtInt(n){ return (n||0).toLocaleString('pt-BR'); }
@@ -708,7 +720,7 @@ function renderPagesYearChart(){
 function renderTimelineChart(){
   const svg = document.getElementById('timelineChart');
   const data = STATS.timeline;
-  const W = 1160, H = 230, padB = 34, padT = 20, padL = 4, padR = 4;
+  const W = 1160, H = 230, padB = 34, padT = 20, padL = 38, padR = 34;
   const maxPages = Math.max(...data.map(d=>d.pages));
   const gap = (W-padL-padR) / data.length;
   const bw = Math.max(gap * 0.62, 1.4);
@@ -741,6 +753,24 @@ function renderTimelineChart(){
     }
   });
 
+  // eixo Y esquerdo: páginas (referente às barras)
+  let axisLeft = '';
+  const pagesStep = Math.ceil(maxPages/4/500)*500;
+  for(let p=0; p<=maxPages; p+=pagesStep){
+    const y = H - padB - ((H-padB-padT) * p) / maxPages;
+    axisLeft += `<text class="tl-axis-label" x="${(padL-8).toFixed(1)}" y="${(y+3).toFixed(1)}" text-anchor="end">${p>=1000?(p/1000)+'k':p}</text>`;
+  }
+  axisLeft += `<text class="tl-axis-title" x="${padL}" y="${padT-6}" text-anchor="start">páginas</text>`;
+
+  // eixo Y direito: livros/mês (referente à linha)
+  let axisRight = '';
+  const countStep = Math.max(1, Math.ceil(maxCount/4));
+  for(let c=0; c<=maxCount; c+=countStep){
+    const y = H - padB - ((H-padB-padT) * c) / maxCount;
+    axisRight += `<text class="tl-axis-label tl-axis-right" x="${(W-padR+8).toFixed(1)}" y="${(y+3).toFixed(1)}" text-anchor="start">${c}</text>`;
+  }
+  axisRight += `<text class="tl-axis-title tl-axis-right" x="${W-padR}" y="${padT-6}" text-anchor="end">livros/mês</text>`;
+
   svg.innerHTML = `
     <defs>
       <linearGradient id="tlFade" x1="0" y1="0" x2="0" y2="1">
@@ -749,6 +779,8 @@ function renderTimelineChart(){
       </linearGradient>
     </defs>
     ${gridlines}
+    ${axisLeft}
+    ${axisRight}
     ${bars}
     <path d="${linePath}" fill="none" stroke="url(#tlFade)" stroke-width="2"/>
     ${labels}
@@ -840,11 +872,12 @@ function renderScatterChart(){
 function renderGoalsChart(){
   const svg = document.getElementById('goalsChart');
   const data = STATS.goals;
-  const W = 640, H = 200, padB = 26, padT = 18;
+  const W = 640, H = 200, padB = 26, padT = 22;
   const maxVal = Math.max(...data.map(d => Math.max(d.goal, d.achieved)));
   const gap = W / data.length;
   const bw = gap * 0.34;
   const gapBetween = 3;
+  const MIN_INSIDE = 15; // altura mínima da barra pra caber o número dentro dela
 
   let html = '';
   data.forEach((d,i) => {
@@ -860,8 +893,24 @@ function renderGoalsChart(){
     html += `<rect class="goal-hit" x="${(goalX).toFixed(1)}" y="0" width="${(bw*2+gapBetween).toFixed(1)}" height="${H-padB}" fill="transparent"></rect>`;
     html += `<rect x="${goalX.toFixed(1)}" y="${(H-padB-goalH).toFixed(1)}" width="${bw.toFixed(1)}" height="${goalH.toFixed(1)}" rx="2" fill="var(--line-strong)"></rect>`;
     html += `<rect x="${achX.toFixed(1)}" y="${(H-padB-achH).toFixed(1)}" width="${bw.toFixed(1)}" height="${achH.toFixed(1)}" rx="2" fill="${achColor}"></rect>`;
+
+    // numero da meta: dentro da barra se couber, senão logo acima
+    const goalCx = goalX + bw/2;
+    if(goalH >= MIN_INSIDE){
+      html += `<text class="goal-num goal-num-inside" x="${goalCx.toFixed(1)}" y="${(H-padB-goalH+13).toFixed(1)}" text-anchor="middle">${d.goal}</text>`;
+    } else {
+      html += `<text class="goal-num" x="${goalCx.toFixed(1)}" y="${(H-padB-goalH-5).toFixed(1)}" text-anchor="middle">${d.goal}</text>`;
+    }
+    // numero atingido: dentro da barra se couber, senão logo acima
+    const achCx = achX + bw/2;
+    if(achH >= MIN_INSIDE){
+      html += `<text class="goal-num goal-num-inside-dark" x="${achCx.toFixed(1)}" y="${(H-padB-achH+13).toFixed(1)}" text-anchor="middle">${d.achieved}</text>`;
+    } else {
+      html += `<text class="goal-num" style="fill:${hit?'var(--brass-light)':'var(--burgundy-light)'}" x="${achCx.toFixed(1)}" y="${(H-padB-achH-5).toFixed(1)}" text-anchor="middle">${d.achieved}</text>`;
+    }
+
     html += `<text class="yc-label" x="${cx.toFixed(1)}" y="${H-8}" text-anchor="middle">'${d.year.slice(2)}</text>`;
-    html += `<text class="yc-count" style="fill:${hit?'var(--brass-light)':'var(--burgundy-light)'}" x="${cx.toFixed(1)}" y="${(H-padB-Math.max(goalH,achH)-6).toFixed(1)}" text-anchor="middle">${d.pct}%</text>`;
+    html += `<text class="yc-count" style="fill:${hit?'var(--brass-light)':'var(--burgundy-light)'}" x="${cx.toFixed(1)}" y="${(H-padB-Math.max(goalH,achH)-16).toFixed(1)}" text-anchor="middle">${d.pct}%</text>`;
     html += `</g>`;
   });
   svg.innerHTML = html;
