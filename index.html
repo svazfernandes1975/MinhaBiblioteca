@@ -168,7 +168,7 @@
   }
   .chart-card h3 span{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); font-weight:400;}
 
-  #yearChart{width:100%; height:180px; display:block;}
+  #yearChart,#pagesYearChart{width:100%; height:180px; display:block;}
   .yc-bar{fill:var(--brass); opacity:0.88; transition:opacity .15s;}
   .yc-bar:hover{opacity:1;}
   .yc-label,.yc-count{font-family:'JetBrains Mono',monospace; fill:var(--paper-dim); font-size:10.5px;}
@@ -183,11 +183,11 @@
   .tl-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:10px;}
   .tl-gridline{stroke:var(--line); stroke-width:1;}
   .tl-axis-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:9.5px;}
-  .tl-axis-label.tl-axis-right{fill:var(--brass-light);}
+  .tl-axis-label.tl-axis-right{fill:var(--burgundy-light);}
   .tl-axis-title{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:9.5px;}
-  .tl-axis-title.tl-axis-right{fill:var(--brass-light);}
+  .tl-axis-title.tl-axis-right{fill:var(--burgundy-light);}
 
-  #scatterChart{width:100%; height:230px; display:block;}
+  #scatterChart{width:100%; flex:1 1 auto; min-height:230px; display:block;}
   .sc-dot{opacity:0.78; transition:opacity .15s, r .15s; stroke:var(--bg); stroke-width:0.5;}
   .sc-dot:hover{opacity:1;}
   .sc-label{font-family:'JetBrains Mono',monospace; fill:var(--muted); font-size:10px;}
@@ -774,15 +774,15 @@ function renderTimelineChart(){
   svg.innerHTML = `
     <defs>
       <linearGradient id="tlFade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--brass-light)" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="var(--brass-light)" stop-opacity="0.15"/>
+        <stop offset="0%" stop-color="var(--burgundy-light)" stop-opacity="1"/>
+        <stop offset="100%" stop-color="var(--burgundy-light)" stop-opacity="0.25"/>
       </linearGradient>
     </defs>
     ${gridlines}
     ${axisLeft}
     ${axisRight}
     ${bars}
-    <path d="${linePath}" fill="none" stroke="url(#tlFade)" stroke-width="2"/>
+    <path d="${linePath}" fill="none" stroke="url(#tlFade)" stroke-width="2.4"/>
     ${labels}
     ${hits}
   `;
@@ -803,8 +803,16 @@ function ratingColor(r){
 
 function renderScatterChart(){
   const svg = document.getElementById('scatterChart');
+  const W = 640;
+  // mede a altura real disponível (o card estica pra acompanhar a coluna ao lado)
+  // e ajusta o viewBox pra manter a mesma escala em X e Y — senão os pontos
+  // (círculos) ficariam esticados feito elipses.
+  const rect = svg.getBoundingClientRect();
+  const H = Math.max(230, Math.round(W * (rect.height / rect.width)));
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
   const data = STATS.scatter;
-  const W = 640, H = 230, padB = 30, padT = 14, padL = 42, padR = 12;
+  const padB = 30, padT = 14, padL = 42, padR = 12;
   const maxPages = Math.max(...data.map(d=>d.p));
   const yFor = (p) => H - padB - ((H-padB-padT) * p) / maxPages;
 
@@ -1291,7 +1299,6 @@ renderYearChart();
 renderPagesYearChart();
 renderTimelineChart();
 renderGoalsChart();
-renderScatterChart();
 renderRatingRows();
 renderAuthors();
 renderMisc();
@@ -1301,6 +1308,13 @@ populateAuthorSelect();
 applyFilters();
 renderGenreList();
 renderLangList();
+renderScatterChart();
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderScatterChart, 150);
+});
 </script>
 </body>
 </html>
