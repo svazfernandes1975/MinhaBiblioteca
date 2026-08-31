@@ -1179,7 +1179,15 @@ function applyFilters(){
   const [field, dir] = sort.split('-');
   list.sort((a,b) => {
     let va, vb;
-    if(field === 'date'){ va = a.dr || a.ds || '0000'; vb = b.dr || b.ds || '0000'; }
+    if(field === 'date'){
+      va = a.dr || a.ds || '0000';
+      vb = b.dr || b.ds || '0000';
+      if(va === vb){
+        // desempate: mesma data de término, ordena pela data de início
+        va = a.ds || '0000';
+        vb = b.ds || '0000';
+      }
+    }
     else if(field === 'rating'){ va = a.r||0; vb = b.r||0; }
     else if(field === 'pages'){ va = a.p||0; vb = b.p||0; }
     else { va = a.t; vb = b.t; }
